@@ -6,7 +6,7 @@ import org.bukkit.inventory.ItemStack;
 
 import java.util.UUID;
 
-public class CustomMenuElement extends MenuElement{
+public class CustomMenuElement extends MenuElement {
 
     private final ItemStack itemStack;
 

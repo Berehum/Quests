@@ -49,19 +49,19 @@ public class AdminInfoCommandHandler implements CommandHandler {
                         sender.sendMessage(ChatColor.DARK_GRAY + " | " + ChatColor.GRAY + config.getKey() + ": " + ChatColor.GRAY + ChatColor.ITALIC + config.getValue());
                     }
                 }
-                sender.sendMessage(ChatColor.RED.toString() + ChatColor.UNDERLINE +  "Start string");
+                sender.sendMessage(ChatColor.RED.toString() + ChatColor.UNDERLINE + "Start string");
                 for (String s : quest.getStartString()) {
                     sender.sendMessage(ChatColor.DARK_GRAY + " * " + ChatColor.GRAY + s);
                 }
-                sender.sendMessage(ChatColor.RED.toString() + ChatColor.UNDERLINE +  "Reward string");
+                sender.sendMessage(ChatColor.RED.toString() + ChatColor.UNDERLINE + "Reward string");
                 for (String s : quest.getRewardString()) {
                     sender.sendMessage(ChatColor.DARK_GRAY + " * " + ChatColor.GRAY + s);
                 }
-                sender.sendMessage(ChatColor.RED.toString() + ChatColor.UNDERLINE +  "Rewards");
+                sender.sendMessage(ChatColor.RED.toString() + ChatColor.UNDERLINE + "Rewards");
                 for (String s : quest.getRewards()) {
                     sender.sendMessage(ChatColor.DARK_GRAY + " * " + ChatColor.GRAY + s);
                 }
-                sender.sendMessage(ChatColor.RED.toString() + ChatColor.UNDERLINE +  "Quest options");
+                sender.sendMessage(ChatColor.RED.toString() + ChatColor.UNDERLINE + "Quest options");
                 sender.sendMessage(ChatColor.RED + "Category: " + ChatColor.GRAY + quest.getCategoryId());
                 sender.sendMessage(ChatColor.RED + "Repeatable: " + ChatColor.GRAY + quest.isRepeatable());
                 sender.sendMessage(ChatColor.RED + "Requirements: " + ChatColor.GRAY + String.join(", ", quest.getRequirements()));

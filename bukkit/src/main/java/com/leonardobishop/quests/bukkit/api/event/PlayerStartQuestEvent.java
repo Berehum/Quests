@@ -18,6 +18,10 @@ public class PlayerStartQuestEvent extends PlayerQuestEvent {
         this.questStartMessage = questStartMessage;
     }
 
+    public static HandlerList getHandlerList() {
+        return handlers;
+    }
+
     /**
      * @return The quest progress
      */
@@ -43,10 +47,6 @@ public class PlayerStartQuestEvent extends PlayerQuestEvent {
     @NotNull
     @Override
     public HandlerList getHandlers() {
-        return handlers;
-    }
-
-    public static HandlerList getHandlerList() {
         return handlers;
     }
 }

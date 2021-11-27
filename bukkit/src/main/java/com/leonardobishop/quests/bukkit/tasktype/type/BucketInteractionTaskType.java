@@ -12,7 +12,6 @@ import com.leonardobishop.quests.common.quest.Quest;
 import com.leonardobishop.quests.common.quest.Task;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
-import org.bukkit.event.player.PlayerBucketEvent;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -52,41 +51,35 @@ public abstract class BucketInteractionTaskType extends BukkitTaskType {
         if (qPlayer == null) return;
 
         for (Quest quest : super.getRegisteredQuests()) {
-            if (qPlayer.hasStartedQuest(quest)) {
-                QuestProgress questProgress = qPlayer.getQuestProgressFile().getQuestProgress(quest);
+            if (!qPlayer.hasStartedQuest(quest)) continue;
+            QuestProgress questProgress = qPlayer.getQuestProgressFile().getQuestProgress(quest);
 
-                for (Task task : quest.getTasksOfType(super.getType())) {
-                    if (!TaskUtils.validateWorld(player, task)) continue;
+            for (Task task : quest.getTasksOfType(super.getType())) {
+                if (!TaskUtils.validateWorld(player, task)) continue;
 
-                    TaskProgress taskProgress = questProgress.getTaskProgress(task.getId());
+                TaskProgress taskProgress = questProgress.getTaskProgress(task.getId());
 
-                    if (taskProgress.isCompleted()) {
-                        continue;
-                    }
+                if (taskProgress.isCompleted()) {
+                    continue;
+                }
 
-                    int amount = (int) task.getConfigValue("amount");
-                    Object configBucket = task.getConfigValue("bucket");
-                    Material material = Material.getMaterial((String) configBucket);
+                int amount = (int) task.getConfigValue("amount");
+                Object configBucket = task.getConfigValue("bucket");
+                Material material = Material.getMaterial((String) configBucket);
 
-                    if (bucket != material) {
-                        continue;
-                    }
+                if (bucket != material) {
+                    continue;
+                }
 
-                    int progress;
-                    if (taskProgress.getProgress() == null) {
-                        progress = 0;
-                    } else {
-                        progress = (int) taskProgress.getProgress();
-                    }
+                int progress = (taskProgress.getProgress() == null) ? 0 : (int) taskProgress.getProgress();
+                taskProgress.setProgress(progress + 1);
 
-                    taskProgress.setProgress(progress + 1);
-
-                    if ((int) taskProgress.getProgress() >= amount) {
-                        taskProgress.setProgress(amount);
-                        taskProgress.setCompleted(true);
-                    }
+                if ((int) taskProgress.getProgress() >= amount) {
+                    taskProgress.setProgress(amount);
+                    taskProgress.setCompleted(true);
                 }
             }
+
         }
     }
 

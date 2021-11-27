@@ -48,45 +48,45 @@ public final class CommandTaskType extends BukkitTaskType {
         }
 
         for (Quest quest : super.getRegisteredQuests()) {
-            if (qPlayer.hasStartedQuest(quest)) {
-                QuestProgress questProgress = qPlayer.getQuestProgressFile().getQuestProgress(quest);
+            if (!qPlayer.hasStartedQuest(quest)) continue;
+            QuestProgress questProgress = qPlayer.getQuestProgressFile().getQuestProgress(quest);
 
-                for (Task task : quest.getTasksOfType(super.getType())) {
-                    if (!TaskUtils.validateWorld(player, task)) continue;
+            for (Task task : quest.getTasksOfType(super.getType())) {
+                if (!TaskUtils.validateWorld(player, task)) continue;
 
-                    TaskProgress taskProgress = questProgress.getTaskProgress(task.getId());
+                TaskProgress taskProgress = questProgress.getTaskProgress(task.getId());
 
-                    if (taskProgress.isCompleted()) {
-                        continue;
-                    }
-                    Object configCommand = task.getConfigValue("command");
-                    Object configIgnoreCase = task.getConfigValue("ignore-case");
+                if (taskProgress.isCompleted()) {
+                    continue;
+                }
+                Object configCommand = task.getConfigValue("command");
+                Object configIgnoreCase = task.getConfigValue("ignore-case");
 
-                    List<String> commands = new ArrayList<>();
-                    if (configCommand instanceof List) {
-                        commands.addAll((List) configCommand);
-                    } else {
-                        commands.add(String.valueOf(configCommand));
-                    }
+                List<String> commands = new ArrayList<>();
+                if (configCommand instanceof List) {
+                    commands.addAll((List) configCommand);
+                } else {
+                    commands.add(String.valueOf(configCommand));
+                }
 
-                    boolean ignoreCasing = false;
-                    if (configIgnoreCase != null) {
-                        ignoreCasing = (boolean) task.getConfigValue("ignore-case");
-                    }
-                    String message = e.getMessage();
-                    if (message.length() >= 1) {
-                        message = message.substring(1);
-                    }
+                boolean ignoreCasing = false;
+                if (configIgnoreCase != null) {
+                    ignoreCasing = (boolean) task.getConfigValue("ignore-case");
+                }
+                String message = e.getMessage();
+                if (message.length() >= 1) {
+                    message = message.substring(1);
+                }
 
-                    for (String command : commands) {
-                        if (ignoreCasing && command.equalsIgnoreCase(message)) {
-                            taskProgress.setCompleted(true);
-                        } else if (!ignoreCasing && command.equals(message)) {
-                            taskProgress.setCompleted(true);
-                        }
+                for (String command : commands) {
+                    if (ignoreCasing && command.equalsIgnoreCase(message)) {
+                        taskProgress.setCompleted(true);
+                    } else if (!ignoreCasing && command.equals(message)) {
+                        taskProgress.setCompleted(true);
                     }
                 }
             }
+
         }
     }
 }

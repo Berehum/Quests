@@ -62,9 +62,9 @@ public final class BuildingCertainTaskType extends BukkitTaskType {
                 }
             }
         }
-        TaskUtils.configValidateBoolean(root + ".reverse-if-broken", config.get("reverse-if-broken"), problems, true,"reverse-if-broken");
-        TaskUtils.configValidateBoolean(root + ".use-similar-blocks", config.get("use-similar-blocks"), problems, true,"use-similar-blocks");
-        TaskUtils.configValidateInt(root + ".data", config.get("data"), problems, true,true, "data");
+        TaskUtils.configValidateBoolean(root + ".reverse-if-broken", config.get("reverse-if-broken"), problems, true, "reverse-if-broken");
+        TaskUtils.configValidateBoolean(root + ".use-similar-blocks", config.get("use-similar-blocks"), problems, true, "use-similar-blocks");
+        TaskUtils.configValidateInt(root + ".data", config.get("data"), problems, true, true, "data");
         return problems;
     }
 
@@ -181,6 +181,7 @@ public final class BuildingCertainTaskType extends BukkitTaskType {
         taskProgress.setProgress(progressBlocksBroken + amount);
 
         if (((int) taskProgress.getProgress()) >= brokenBlocksNeeded) {
+            taskProgress.setProgress(brokenBlocksNeeded);
             taskProgress.setCompleted(true);
         }
     }

@@ -24,7 +24,8 @@ public class Quest implements Comparable<Quest> {
     private Map<String, String> placeholders;
     private String categoryid;
 
-    private Quest() { }
+    private Quest() {
+    }
 
     /**
      * Register a task to this quest.
@@ -220,9 +221,9 @@ public class Quest implements Comparable<Quest> {
     /**
      * Compare the sort orders for this quest with another quest.
      *
-     * @see Comparable#compareTo(Object)
      * @param quest the quest to compare with
      * @return a negative integer, zero, or a positive integer
+     * @see Comparable#compareTo(Object)
      */
     @Override
     public int compareTo(@NotNull Quest quest) {

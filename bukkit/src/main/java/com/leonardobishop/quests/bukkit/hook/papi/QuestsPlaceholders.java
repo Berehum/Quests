@@ -227,7 +227,8 @@ public class QuestsPlaceholders extends PlaceholderExpansion implements Cacheabl
                     break;
                 case "category":
                 case "c":
-                    if (!plugin.getQuestsConfig().getBoolean("options.categories-enabled")) return "Categories Disabled";
+                    if (!plugin.getQuestsConfig().getBoolean("options.categories-enabled"))
+                        return "Categories Disabled";
                     if (key.length == 1) return "Please specify category name";
 
                     final Category category = plugin.getQuestManager().getCategoryById(key[1]);

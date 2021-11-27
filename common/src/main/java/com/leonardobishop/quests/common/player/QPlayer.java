@@ -54,7 +54,8 @@ public class QPlayer {
 
     /**
      * Attempt to track a quest for the player. This will also play all effects (such as titles, messages etc.)
-     **
+     * *
+     *
      * @param quest the quest to track
      */
     public void trackQuest(@Nullable Quest quest) {
@@ -75,7 +76,7 @@ public class QPlayer {
 
     /**
      * Attempt to start a quest for the player. This will also play all effects (such as titles, messages etc.)
-     *
+     * <p>
      * Warning: will fail if the player is not online.
      *
      * @param quest the quest to start
@@ -102,7 +103,7 @@ public class QPlayer {
 
     /**
      * Check if the player can start a quest.
-     *
+     * <p>
      * Warning: will fail if the player is not online.
      *
      * @param quest the quest to check
@@ -135,8 +136,8 @@ public class QPlayer {
     /**
      * Get this players associated {@link QuestController}, usually the servers active quest controller
      *
-     * @see QPlayerManager#getActiveQuestController()
      * @return the quest controller for this player
+     * @see QPlayerManager#getActiveQuestController()
      */
     public @NotNull QuestController getQuestController() {
         return questController;

@@ -54,7 +54,7 @@ public final class FishingCertainTaskType extends BukkitTaskType {
         if (event.getState() != PlayerFishEvent.State.CAUGHT_FISH) {
             return;
         }
-        
+
         Player player = event.getPlayer();
         if (!(event.getCaught() instanceof Item)) {
             return;
@@ -66,52 +66,46 @@ public final class FishingCertainTaskType extends BukkitTaskType {
         }
 
         for (Quest quest : super.getRegisteredQuests()) {
-            if (qPlayer.hasStartedQuest(quest)) {
-                QuestProgress questProgress = qPlayer.getQuestProgressFile().getQuestProgress(quest);
+            if (!qPlayer.hasStartedQuest(quest)) continue;
+            QuestProgress questProgress = qPlayer.getQuestProgressFile().getQuestProgress(quest);
 
-                for (Task task : quest.getTasksOfType(super.getType())) {
-                    if (!TaskUtils.validateWorld(player, task)) continue;
+            for (Task task : quest.getTasksOfType(super.getType())) {
+                if (!TaskUtils.validateWorld(player, task)) continue;
 
-                    TaskProgress taskProgress = questProgress.getTaskProgress(task.getId());
+                TaskProgress taskProgress = questProgress.getTaskProgress(task.getId());
 
-                    if (taskProgress.isCompleted()) {
-                        continue;
-                    }
+                if (taskProgress.isCompleted()) {
+                    continue;
+                }
 
-                    int catchesNeeded = (int) task.getConfigValue("amount");
-                    String configItem = (String) task.getConfigValue("item");
-                    Object configData = task.getConfigValue("data");
+                int catchesNeeded = (int) task.getConfigValue("amount");
+                String configItem = (String) task.getConfigValue("item");
+                Object configData = task.getConfigValue("data");
 
-                    ItemStack is;
-                    Material material = Material.getMaterial(String.valueOf(configItem));
+                ItemStack is;
+                Material material = Material.getMaterial(String.valueOf(configItem));
 
-                    if (material == null) {
-                        continue;
-                    }
-                    if (configData != null) {
-                        is = new ItemStack(material, 1, ((Integer) configData).shortValue());
-                    } else {
-                        is = new ItemStack(material, 1);
-                    }
+                if (material == null) {
+                    continue;
+                }
+                if (configData != null) {
+                    is = new ItemStack(material, 1, ((Integer) configData).shortValue());
+                } else {
+                    is = new ItemStack(material, 1);
+                }
 
-                    if (!caught.getItemStack().isSimilar(is)) {
-                        continue;
-                    }
+                if (!caught.getItemStack().isSimilar(is)) {
+                    continue;
+                }
 
-                    int progressCatches;
-                    if (taskProgress.getProgress() == null) {
-                        progressCatches = 0;
-                    } else {
-                        progressCatches = (int) taskProgress.getProgress();
-                    }
+                int progressCatches = (taskProgress.getProgress() == null) ? 0 : (int) taskProgress.getProgress();
+                taskProgress.setProgress(progressCatches + 1);
 
-                    taskProgress.setProgress(progressCatches + 1);
-
-                    if (((int) taskProgress.getProgress()) >= catchesNeeded) {
-                        taskProgress.setCompleted(true);
-                    }
+                if (((int) taskProgress.getProgress()) >= catchesNeeded) {
+                    taskProgress.setCompleted(true);
                 }
             }
+
         }
     }
 

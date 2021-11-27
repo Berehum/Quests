@@ -72,6 +72,7 @@ public final class EnchantingTaskType extends BukkitTaskType {
                     taskProgress.setProgress(progressEnchant + 1);
 
                     if (((int) taskProgress.getProgress()) >= enchantsNeeded) {
+                        taskProgress.setProgress(enchantsNeeded);
                         taskProgress.setCompleted(true);
                     }
                 }

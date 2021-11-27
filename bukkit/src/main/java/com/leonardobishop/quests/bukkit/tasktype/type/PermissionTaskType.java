@@ -33,24 +33,23 @@ public final class PermissionTaskType extends BukkitTaskType {
                     if (qPlayer == null) {
                         continue;
                     }
+
                     for (Quest quest : PermissionTaskType.super.getRegisteredQuests()) {
-                        if (qPlayer.hasStartedQuest(quest)) {
-                            QuestProgress questProgress = qPlayer.getQuestProgressFile().getQuestProgress(quest);
-                            for (Task task : quest.getTasksOfType(PermissionTaskType.super.getType())) {
-                                TaskProgress taskProgress = questProgress.getTaskProgress(task.getId());
-                                if (taskProgress.isCompleted()) {
-                                    continue;
-                                }
-                                String permission = (String) task.getConfigValue("permission");
-                                if (permission != null) {
-                                    if (player.hasPermission(permission)) {
-                                        taskProgress.setCompleted(true);
-                                    }
-                                }
+                        if (!qPlayer.hasStartedQuest(quest)) continue;
+                        QuestProgress questProgress = qPlayer.getQuestProgressFile().getQuestProgress(quest);
+                        for (Task task : quest.getTasksOfType(PermissionTaskType.super.getType())) {
+                            TaskProgress taskProgress = questProgress.getTaskProgress(task.getId());
+                            if (taskProgress.isCompleted()) {
+                                continue;
                             }
+                            String permission = (String) task.getConfigValue("permission");
+                            if (permission == null || !player.hasPermission(permission)) continue;
+                            taskProgress.setCompleted(true);
                         }
                     }
                 }
+
+
             }
         }.runTaskTimer(plugin, 30L, 30L);
     }

@@ -15,7 +15,7 @@ import java.util.regex.Pattern;
  * The updater checks for updates on Spigot, and prints to the logger if one is found.
  */
 public class Updater {
- 
+
     private static final int PROJECT_ID = 23696;
     private final String installedVersion;
     private final int[] tokenizedInstalledVersion;
@@ -34,7 +34,8 @@ public class Updater {
         this.enabled = enabled;
         try {
             this.api = new URL(getApiUrl());
-        } catch (MalformedURLException ignored) { }
+        } catch (MalformedURLException ignored) {
+        }
     }
 
     public String getUpdateLink() {

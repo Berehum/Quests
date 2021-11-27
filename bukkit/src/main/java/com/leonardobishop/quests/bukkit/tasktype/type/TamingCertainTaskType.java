@@ -4,6 +4,7 @@ import com.leonardobishop.quests.bukkit.BukkitQuestsPlugin;
 import com.leonardobishop.quests.bukkit.tasktype.BukkitTaskType;
 import com.leonardobishop.quests.bukkit.util.TaskUtils;
 import com.leonardobishop.quests.common.config.ConfigProblem;
+import com.leonardobishop.quests.common.config.ConfigProblemDescriptions;
 import com.leonardobishop.quests.common.player.QPlayer;
 import com.leonardobishop.quests.common.player.questprogressfile.QuestProgress;
 import com.leonardobishop.quests.common.player.questprogressfile.TaskProgress;
@@ -13,37 +14,45 @@ import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
-import org.bukkit.event.player.PlayerMoveEvent;
+import org.bukkit.event.entity.EntityTameEvent;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-public final class WalkingTaskType extends BukkitTaskType {
+public class TamingCertainTaskType extends BukkitTaskType {
 
     private final BukkitQuestsPlugin plugin;
 
-    public WalkingTaskType(BukkitQuestsPlugin plugin) {
-        super("walking", TaskUtils.TASK_ATTRIBUTION_STRING, "Walk a set distance.");
+    public TamingCertainTaskType(BukkitQuestsPlugin plugin) {
+        super("tamingcertain", TaskUtils.TASK_ATTRIBUTION_STRING, "Tame a set amount of specific animals.");
         this.plugin = plugin;
     }
 
     @Override
     public @NotNull List<ConfigProblem> validateConfig(@NotNull String root, @NotNull HashMap<String, Object> config) {
         ArrayList<ConfigProblem> problems = new ArrayList<>();
-        if (TaskUtils.configValidateExists(root + ".distance", config.get("distance"), problems, "distance", super.getType()))
-            TaskUtils.configValidateInt(root + ".distance", config.get("distance"), problems, false, true, "distance");
+        if (TaskUtils.configValidateExists(root + ".mob", config.get("mob"), problems, "mob", super.getType())) {
+            try {
+                EntityType.valueOf(String.valueOf(config.get("mob")));
+            } catch (IllegalArgumentException ex) {
+                problems.add(new ConfigProblem(ConfigProblem.ConfigProblemType.WARNING,
+                        ConfigProblemDescriptions.UNKNOWN_ENTITY_TYPE.getDescription(String.valueOf(config.get("mob"))), root + ".mob"));
+            }
+        }
+        if (TaskUtils.configValidateExists(root + ".amount", config.get("amount"), problems, "amount", super.getType()))
+            TaskUtils.configValidateInt(root + ".amount", config.get("amount"), problems, false, true, "amount");
         return problems;
     }
 
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
-    public void onMove(PlayerMoveEvent event) {
-        if (event.getFrom().getBlockX() == event.getTo().getBlockX() && event.getFrom().getBlockZ() == event.getTo().getBlockZ()) {
+    public void onTame(EntityTameEvent event) {
+        if (!(event.getOwner() instanceof Player)) {
             return;
         }
 
-        Player player = event.getPlayer();
+        Player player = (Player) event.getOwner();
 
         if (player.hasMetadata("NPC")) return;
 
@@ -60,47 +69,33 @@ public final class WalkingTaskType extends BukkitTaskType {
                 if (!TaskUtils.validateWorld(player, task)) continue;
 
                 TaskProgress taskProgress = questProgress.getTaskProgress(task.getId());
-
                 if (taskProgress.isCompleted()) {
                     continue;
                 }
 
-                if (task.getConfigValue("mode") != null && !validateTransportMethod(player, task.getConfigValue("mode").toString())) {
+                String configEntity = (String) task.getConfigValue("mob");
+
+                EntityType entity;
+                try {
+                    entity = EntityType.valueOf(configEntity);
+                } catch (IllegalArgumentException ex) {
                     continue;
                 }
 
-                int distanceNeeded = (int) task.getConfigValue("distance");
+                if (event.getEntity().getType() != entity) {
+                    continue;
+                }
 
-                int progressDistance = (taskProgress.getProgress() == null) ? 0 : (int) taskProgress.getProgress();
-                taskProgress.setProgress(progressDistance + 1);
+                int tamesNeeded = (int) task.getConfigValue("amount");
 
-                if (((int) taskProgress.getProgress()) >= distanceNeeded) {
-                    taskProgress.setProgress(distanceNeeded);
+                int progressTamed = (taskProgress.getProgress() == null) ? 0 : (int) taskProgress.getProgress();
+                taskProgress.setProgress(progressTamed + 1);
+
+                if (((int) taskProgress.getProgress()) >= tamesNeeded) {
+                    taskProgress.setProgress(tamesNeeded);
                     taskProgress.setCompleted(true);
                 }
             }
-
-        }
-    }
-
-    private boolean validateTransportMethod(Player player, String mode) {
-        switch (mode.toLowerCase()) {
-            case "boat":
-                return player.getVehicle() != null && player.getVehicle().getType() == EntityType.BOAT;
-            case "horse":
-                return player.getVehicle() != null && player.getVehicle().getType() == EntityType.HORSE;
-            case "pig":
-                return player.getVehicle() != null && player.getVehicle().getType() == EntityType.PIG;
-            case "sneaking":
-                return player.isSneaking();
-            case "walking":
-                return !player.isSprinting();
-            case "running":
-                return player.isSprinting();
-            case "swimming":
-                return player.isSwimming();
-            default:
-                return false;
         }
     }
 

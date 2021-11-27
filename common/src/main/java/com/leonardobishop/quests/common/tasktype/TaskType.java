@@ -22,8 +22,8 @@ public abstract class TaskType {
     private String description;
 
     /**
-     * @param type the name of the task type, should not contain spaces
-     * @param author the name of the person (or people) who wrote it
+     * @param type        the name of the task type, should not contain spaces
+     * @param author      the name of the person (or people) who wrote it
      * @param description a short, simple description of the task type
      */
     public TaskType(@NotNull String type, String author, String description) {
@@ -103,7 +103,7 @@ public abstract class TaskType {
     /**
      * Called when Quests reloads the configuration - used to detect errors in the configuration of your task type.
      *
-     * @param root the root path for the config
+     * @param root   the root path for the config
      * @param config the config itself
      */
     public @NotNull List<ConfigProblem> validateConfig(@NotNull String root, @NotNull HashMap<String, Object> config) {

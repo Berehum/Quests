@@ -17,80 +17,80 @@ public interface Quests {
     /**
      * Obtain an instance of the Quests logger.
      *
-     * @see QuestsLogger
      * @return quests logger
+     * @see QuestsLogger
      */
     @NotNull QuestsLogger getQuestsLogger();
 
     /**
      * Obtain an instance of the QuestManager.
      *
-     * @see QuestManager
      * @return quest manager
+     * @see QuestManager
      */
     @NotNull QuestManager getQuestManager();
 
     /**
      * Obtain an instance of the QPlayerManager.
      *
-     * @see QPlayerManager
      * @return quest player manager
+     * @see QPlayerManager
      */
     @NotNull QPlayerManager getPlayerManager();
 
     /**
      * Obtain an instance of the QuestController.
      *
-     * @see QuestController
      * @return quest controller
+     * @see QuestController
      */
     @NotNull QuestController getQuestController();
 
     /**
      * Obtain an instance of the TaskTypeManager.
      *
-     * @see TaskTypeManager
      * @return task type manager
+     * @see TaskTypeManager
      */
     @NotNull TaskTypeManager getTaskTypeManager();
 
     /**
      * Obtain an instance of the QuestCompleter.
      *
-     * @see QuestCompleter
      * @return quest completer
+     * @see QuestCompleter
      */
     @NotNull QuestCompleter getQuestCompleter();
 
     /**
      * Obtain an instance of the QuestConfig.
      *
-     * @see QuestsConfig
      * @return quest config
+     * @see QuestsConfig
      */
     @NotNull QuestsConfig getQuestsConfig();
 
     /**
      * Obtain an instance of the Updater.
      *
-     * @see Updater
      * @return updater
+     * @see Updater
      */
     @NotNull Updater getUpdater();
 
     /**
      * Obtain an instance of the ServerScheduler.
      *
-     * @see ServerScheduler
      * @return server scheduler
+     * @see ServerScheduler
      */
     @NotNull ServerScheduler getScheduler();
 
     /**
      * Obtain an instance of the StorageProvider.
      *
-     * @see StorageProvider
      * @return storage provider
+     * @see StorageProvider
      */
     @NotNull StorageProvider getStorageProvider();
 

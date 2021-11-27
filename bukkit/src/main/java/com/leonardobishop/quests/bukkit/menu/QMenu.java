@@ -7,7 +7,9 @@ import org.bukkit.inventory.Inventory;
 public interface QMenu {
 
     QPlayer getOwner();
+
     Inventory toInventory(int page);
+
     boolean handleClick(InventoryClickEvent event, MenuController controller);
 
 }

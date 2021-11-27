@@ -52,34 +52,29 @@ public final class TamingTaskType extends BukkitTaskType {
         }
 
         for (Quest quest : super.getRegisteredQuests()) {
-            if (qPlayer.hasStartedQuest(quest)) {
-                QuestProgress questProgress = qPlayer.getQuestProgressFile().getQuestProgress(quest);
+            if (!qPlayer.hasStartedQuest(quest)) continue;
+            QuestProgress questProgress = qPlayer.getQuestProgressFile().getQuestProgress(quest);
 
-                for (Task task : quest.getTasksOfType(super.getType())) {
-                    if (!TaskUtils.validateWorld(player, task)) continue;
+            for (Task task : quest.getTasksOfType(super.getType())) {
+                if (!TaskUtils.validateWorld(player, task)) continue;
 
-                    TaskProgress taskProgress = questProgress.getTaskProgress(task.getId());
+                TaskProgress taskProgress = questProgress.getTaskProgress(task.getId());
 
-                    if (taskProgress.isCompleted()) {
-                        continue;
-                    }
+                if (taskProgress.isCompleted()) {
+                    continue;
+                }
 
-                    int tamesNeeded = (int) task.getConfigValue("amount");
+                int tamesNeeded = (int) task.getConfigValue("amount");
 
-                    int progressTamed;
-                    if (taskProgress.getProgress() == null) {
-                        progressTamed = 0;
-                    } else {
-                        progressTamed = (int) taskProgress.getProgress();
-                    }
+                int progressTamed = (taskProgress.getProgress() == null) ? 0 : (int) taskProgress.getProgress();
+                taskProgress.setProgress(progressTamed + 1);
 
-                    taskProgress.setProgress(progressTamed + 1);
-
-                    if (((int) taskProgress.getProgress()) >= tamesNeeded) {
-                        taskProgress.setCompleted(true);
-                    }
+                if (((int) taskProgress.getProgress()) >= tamesNeeded) {
+                    taskProgress.setProgress(tamesNeeded);
+                    taskProgress.setCompleted(true);
                 }
             }
+
         }
     }
 

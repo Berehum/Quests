@@ -6,8 +6,8 @@ import com.leonardobishop.quests.common.quest.Quest;
 
 public class QuestSortWrapper implements Comparable<QuestSortWrapper> {
 
-    private int weightedSortOrder;
     private final Quest quest;
+    private int weightedSortOrder;
 
     public QuestSortWrapper(Quests plugin, Quest quest) {
         this.quest = quest;

@@ -18,6 +18,10 @@ public class PreStartQuestEvent extends PlayerQuestEvent {
         this.questResultMessage = questResultMessage;
     }
 
+    public static HandlerList getHandlerList() {
+        return handlers;
+    }
+
     public QuestStartResult getQuestStartResult() {
         return this.questStartResult;
     }
@@ -48,10 +52,6 @@ public class PreStartQuestEvent extends PlayerQuestEvent {
     @NotNull
     @Override
     public HandlerList getHandlers() {
-        return handlers;
-    }
-
-    public static HandlerList getHandlerList() {
         return handlers;
     }
 }

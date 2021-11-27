@@ -1,6 +1,6 @@
 name: Bug Report
 description: Report issues/unexpected behaviour with Quests
-labels: ['bug', 'status: needs investigating']
+labels: [ 'bug', 'status: needs investigating' ]
 body:
   - type: markdown
     attributes:
@@ -28,9 +28,9 @@ body:
         You can identify your server software by running `/version`, and your Quests version by running `/version Quests`.
         **Note:** simply stating "Latest version" is **not** enough! You must include an actual version string for all versions.
       value: |
-          - Minecraft version:
-          - Server software:
-          - Quests version:
+        - Minecraft version:
+        - Server software:
+        - Quests version:
   - type: checkboxes
     attributes:
       label: Agreements

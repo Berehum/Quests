@@ -16,20 +16,95 @@ import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
-import org.bukkit.event.entity.EntityDeathEvent;
+import org.bukkit.event.player.PlayerInteractEntityEvent;
+import org.bukkit.inventory.EquipmentSlot;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-public final class MobkillingCertainTaskType extends BukkitTaskType {
+public class InteractEntityTaskType extends BukkitTaskType {
 
     private final BukkitQuestsPlugin plugin;
 
-    public MobkillingCertainTaskType(BukkitQuestsPlugin plugin) {
-        super("mobkillingcertain", TaskUtils.TASK_ATTRIBUTION_STRING, "Kill a set amount of a specific entity type.");
+    public InteractEntityTaskType(BukkitQuestsPlugin plugin) {
+        super("interactentity", TaskUtils.TASK_ATTRIBUTION_STRING, "Interact with a specific entity.");
         this.plugin = plugin;
+    }
+
+    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
+    public void onEntityInteract(PlayerInteractEntityEvent event) {
+        if (event.getHand() != EquipmentSlot.HAND) return;
+
+        Player player = event.getPlayer();
+        Entity entity = event.getRightClicked();
+        if (!player.isOnline() || player.hasMetadata("NPC") || entity instanceof Player) return;
+
+        QPlayer qPlayer = plugin.getPlayerManager().getPlayer(player.getUniqueId());
+
+        if (qPlayer == null) return;
+
+        for (Quest quest : super.getRegisteredQuests()) {
+            if (!qPlayer.hasStartedQuest(quest)) continue;
+            QuestProgress questProgress = qPlayer.getQuestProgressFile().getQuestProgress(quest);
+
+            for (Task task : quest.getTasksOfType(super.getType())) {
+                if (!TaskUtils.validateWorld(player, task)) continue;
+
+                TaskProgress taskProgress = questProgress.getTaskProgress(task.getId());
+
+                if (taskProgress.isCompleted()) {
+                    continue;
+                }
+
+                Object mob = task.getConfigValue("mob");
+                EntityType type;
+                try {
+                    type = EntityType.valueOf((String) mob);
+                } catch (Exception e) {
+                    continue;
+                }
+
+                if (entity.getType() != type) {
+                    continue;
+                }
+
+                Object configName = task.getConfigValues().containsKey("name") ? task.getConfigValue("name") : task.getConfigValue("names");
+
+                if (configName != null) {
+                    List<String> configNames = new ArrayList<>();
+                    if (configName instanceof List) {
+                        configNames.addAll((List) configName);
+                    } else {
+                        configNames.add(String.valueOf(configName));
+                    }
+
+                    boolean validName = false;
+                    for (String name : configNames) {
+                        name = Chat.color(name);
+                        if (entity.getCustomName() == null || !entity.getCustomName().equals(name)) {
+                            validName = true;
+                            break;
+                        }
+                    }
+
+                    if (!validName) continue;
+                }
+
+                int amount = (int) task.getConfigValue("amount");
+
+                int progress = (taskProgress.getProgress() == null) ? 0 : (int) taskProgress.getProgress();
+                taskProgress.setProgress(progress + 1);
+
+                if ((int) taskProgress.getProgress() >= amount) {
+                    taskProgress.setProgress(amount);
+                    taskProgress.setCompleted(true);
+                }
+            }
+
+        }
+
     }
 
     @Override
@@ -45,89 +120,9 @@ public final class MobkillingCertainTaskType extends BukkitTaskType {
         }
         if (TaskUtils.configValidateExists(root + ".amount", config.get("amount"), problems, "amount", super.getType()))
             TaskUtils.configValidateInt(root + ".amount", config.get("amount"), problems, false, true, "amount");
+
         return problems;
     }
 
-    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
-    public void onMobKill(EntityDeathEvent event) {
-        Player killer = event.getEntity().getKiller();
-        Entity mob = event.getEntity();
-
-        if (mob instanceof Player) {
-            return;
-        }
-
-        if (killer == null) {
-            return;
-        }
-
-        if (killer.hasMetadata("NPC")) return;
-
-        QPlayer qPlayer = plugin.getPlayerManager().getPlayer(killer.getUniqueId());
-        if (qPlayer == null) {
-            return;
-        }
-
-        for (Quest quest : super.getRegisteredQuests()) {
-            if (!qPlayer.hasStartedQuest(quest)) continue;
-            QuestProgress questProgress = qPlayer.getQuestProgressFile().getQuestProgress(quest);
-
-            for (Task task : quest.getTasksOfType(super.getType())) {
-                if (!TaskUtils.validateWorld(killer, task)) continue;
-
-                TaskProgress taskProgress = questProgress.getTaskProgress(task.getId());
-
-                if (taskProgress.isCompleted()) {
-                    continue;
-                }
-
-                String configEntity = (String) task.getConfigValue("mob");
-
-                EntityType entity;
-                try {
-                    entity = EntityType.valueOf(configEntity);
-                } catch (IllegalArgumentException ex) {
-                    continue;
-                }
-
-                if (mob.getType() != entity) {
-                    continue;
-                }
-
-
-                Object configName = task.getConfigValues().containsKey("name") ? task.getConfigValue("name") : task.getConfigValue("names");
-
-                if (configName != null) {
-                    List<String> configNames = new ArrayList<>();
-                    if (configName instanceof List) {
-                        configNames.addAll((List) configName);
-                    } else {
-                        configNames.add(String.valueOf(configName));
-                    }
-
-                    boolean validName = false;
-                    for (String name : configNames) {
-                        name = Chat.color(name);
-                        if (mob.getCustomName() == null || !mob.getCustomName().equals(name)) {
-                            validName = true;
-                            break;
-                        }
-                    }
-
-                    if (!validName) continue;
-                }
-
-                int progressKills = (taskProgress.getProgress() == null) ? 0 : (int) taskProgress.getProgress();
-                taskProgress.setProgress(progressKills + 1);
-
-                int mobKillsNeeded = (int) task.getConfigValue("amount");
-                if (((int) taskProgress.getProgress()) >= mobKillsNeeded) {
-                    taskProgress.setProgress(mobKillsNeeded);
-                    taskProgress.setCompleted(true);
-                }
-            }
-
-        }
-    }
 
 }

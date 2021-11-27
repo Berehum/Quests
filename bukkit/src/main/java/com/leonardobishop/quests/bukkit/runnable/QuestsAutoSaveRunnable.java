@@ -30,7 +30,8 @@ public class QuestsAutoSaveRunnable extends BukkitRunnable {
         if (player == null) {
             try {
                 super.cancel();
-            } catch (Exception ignored) {}
+            } catch (Exception ignored) {
+            }
             return;
         }
 

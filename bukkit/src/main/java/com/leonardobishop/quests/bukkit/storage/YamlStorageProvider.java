@@ -49,7 +49,7 @@ public class YamlStorageProvider implements StorageProvider {
         ReentrantLock lock = lock(uuid);
         Map<String, Quest> presentQuests = new HashMap<>(plugin.getQuestManager().getQuests());
         boolean validateQuests = plugin.getQuestsConfig().getBoolean("options.verify-quest-exists-on-load", true);
-        
+
         QuestProgressFile questProgressFile = new QuestProgressFile(uuid, plugin);
         try {
             File directory = new File(plugin.getDataFolder() + File.separator + "playerdata");

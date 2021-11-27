@@ -188,7 +188,7 @@ public class QuestQMenu implements QMenu {
             Inventory trimmedInventory = Bukkit.createInventory(null, inventorySize, title);
 
             for (int slot = 0; slot < trimmedInventory.getSize(); slot++) {
-                if (slot >= (trimmedInventory.getSize() - 9) && backButtonEnabled){
+                if (slot >= (trimmedInventory.getSize() - 9) && backButtonEnabled) {
                     if (config.getBoolean("options.categories-enabled")) {
                         trimmedInventory.setItem(slot, back);
                         backButtonLocation = slot;

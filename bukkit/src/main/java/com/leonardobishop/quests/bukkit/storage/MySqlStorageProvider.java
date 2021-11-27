@@ -229,7 +229,7 @@ public class MySqlStorageProvider implements StorageProvider {
                 List<QuestProgress> questProgressValues = new ArrayList<>(questProgressFile.getAllQuestProgress());
                 for (QuestProgress questProgress : questProgressValues) {
                     if (!questProgress.isModified()) continue;
-                    
+
                     String questId = questProgress.getQuestId();
                     writeQuestProgress.setString(1, uuid.toString());
                     writeQuestProgress.setString(2, questProgress.getQuestId());

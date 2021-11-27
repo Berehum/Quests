@@ -72,105 +72,101 @@ public final class CraftingTaskType extends BukkitTaskType {
         }
 
         for (Quest quest : super.getRegisteredQuests()) {
-            if (qPlayer.hasStartedQuest(quest)) {
-                QuestProgress questProgress = qPlayer.getQuestProgressFile().getQuestProgress(quest);
+            if (!qPlayer.hasStartedQuest(quest)) continue;
+            QuestProgress questProgress = qPlayer.getQuestProgressFile().getQuestProgress(quest);
 
-                for (Task task : quest.getTasksOfType(super.getType())) {
-                    if (!TaskUtils.validateWorld(player, task)) continue;
+            for (Task task : quest.getTasksOfType(super.getType())) {
+                if (!TaskUtils.validateWorld(player, task)) continue;
 
-                    TaskProgress taskProgress = questProgress.getTaskProgress(task.getId());
+                TaskProgress taskProgress = questProgress.getTaskProgress(task.getId());
 
-                    if (taskProgress.isCompleted()) {
-                        continue;
-                    }
+                if (taskProgress.isCompleted()) {
+                    continue;
+                }
 
-                    Material material;
-                    int amount = (int) task.getConfigValue("amount");
-                    Object configBlock = task.getConfigValue("item");
-                    Object configData = task.getConfigValue("data");
+                Material material;
+                int amount = (int) task.getConfigValue("amount");
+                Object configBlock = task.getConfigValue("item");
+                Object configData = task.getConfigValue("data");
 
-                    QuestItem qi;
-                    if ((qi = fixedQuestItemCache.get(quest.getId(), task.getId())) == null) {
-                        if (configBlock instanceof ConfigurationSection) {
-                            qi = plugin.getConfiguredQuestItem("", (ConfigurationSection) configBlock);
-                        } else {
-                            material = Material.getMaterial(String.valueOf(configBlock));
-                            ItemStack is;
-                            if (material == null) {
-                                continue;
-                            }
-                            if (configData != null) {
-                                is = new ItemStack(material, 1, ((Integer) configData).shortValue());
-                            } else {
-                                is = new ItemStack(material, 1);
-                            }
-                            qi = new ParsedQuestItem("parsed", null, is);
-                        }
-                        fixedQuestItemCache.put(quest.getId(), task.getId(), qi);
-                    }
-
-                    if (!qi.compareItemStack(clickedItem)) continue;
-
-                    int progress;
-                    if (taskProgress.getProgress() == null) {
-                        progress = 0;
+                QuestItem qi;
+                if ((qi = fixedQuestItemCache.get(quest.getId(), task.getId())) == null) {
+                    if (configBlock instanceof ConfigurationSection) {
+                        qi = plugin.getConfiguredQuestItem("", (ConfigurationSection) configBlock);
                     } else {
-                        progress = (int) taskProgress.getProgress();
+                        material = Material.getMaterial(String.valueOf(configBlock));
+                        ItemStack is;
+                        if (material == null) {
+                            continue;
+                        }
+                        if (configData != null) {
+                            is = new ItemStack(material, 1, ((Integer) configData).shortValue());
+                        } else {
+                            is = new ItemStack(material, 1);
+                        }
+                        qi = new ParsedQuestItem("parsed", null, is);
                     }
+                    fixedQuestItemCache.put(quest.getId(), task.getId(), qi);
+                }
 
-                    taskProgress.setProgress(progress + clickedAmount);
+                if (!qi.compareItemStack(clickedItem)) continue;
 
-                    if ((int) taskProgress.getProgress() >= amount) {
-                        taskProgress.setProgress(amount);
-                        taskProgress.setCompleted(true);
-                    }
+                int progress = (taskProgress.getProgress() == null) ? 0 : (int) taskProgress.getProgress();
+                taskProgress.setProgress(progress + clickedAmount);
+
+                if ((int) taskProgress.getProgress() >= amount) {
+                    taskProgress.setProgress(amount);
+                    taskProgress.setCompleted(true);
                 }
             }
+
         }
     }
 
     // thanks https://www.spigotmc.org/threads/util-get-the-crafted-item-amount-from-a-craftitemevent.162952/
     private int getCraftAmount(CraftItemEvent e) {
-        if(e.isCancelled()) { return 0; }
+        if (e.isCancelled()) {
+            return 0;
+        }
 
         Player p = (Player) e.getWhoClicked();
 
-        if (e.isShiftClick()) {
-            int itemsChecked = 0;
-            int possibleCreations = 1;
-
-            int amountCanBeMade = 0;
-
-            for (ItemStack item : e.getInventory().getMatrix()) {
-                if (item != null && item.getType() != Material.AIR) {
-                    if (itemsChecked == 0) {
-                        possibleCreations = item.getAmount();
-                        itemsChecked++;
-                    } else {
-                        possibleCreations = Math.min(possibleCreations, item.getAmount());
-                    }
-                }
-            }
-
-            int amountOfItems = e.getRecipe().getResult().getAmount() * possibleCreations;
-
-            ItemStack i = e.getRecipe().getResult();
-
-            for(int s = 0; s <= 35; s++) {
-                ItemStack test = p.getInventory().getItem(s);
-                if(test == null || test.getType() == Material.AIR) {
-                    amountCanBeMade+= i.getMaxStackSize();
-                    continue;
-                }
-                if(test.isSimilar(i)) {
-                    amountCanBeMade += i.getMaxStackSize() - test.getAmount();
-                }
-            }
-
-            return amountOfItems > amountCanBeMade ? amountCanBeMade : amountOfItems;
-        } else {
+        if (!e.isShiftClick()) {
             return e.getRecipe().getResult().getAmount();
         }
+        int itemsChecked = 0;
+        int possibleCreations = 1;
+
+        int amountCanBeMade = 0;
+
+        for (ItemStack item : e.getInventory().getMatrix()) {
+            if (item != null && item.getType() != Material.AIR) {
+                if (itemsChecked == 0) {
+                    possibleCreations = item.getAmount();
+                    itemsChecked++;
+                } else {
+                    possibleCreations = Math.min(possibleCreations, item.getAmount());
+                }
+            }
+        }
+
+        int amountOfItems = e.getRecipe().getResult().getAmount() * possibleCreations;
+
+        ItemStack i = e.getRecipe().getResult();
+
+        for (int s = 0; s <= 35; s++) {
+            ItemStack test = p.getInventory().getItem(s);
+            if (test == null || test.getType() == Material.AIR) {
+                amountCanBeMade += i.getMaxStackSize();
+                continue;
+            }
+            if (test.isSimilar(i)) {
+                amountCanBeMade += i.getMaxStackSize() - test.getAmount();
+            }
+        }
+
+        return Math.min(amountOfItems, amountCanBeMade);
+
     }
 
 }

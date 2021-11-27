@@ -6,7 +6,7 @@ version: ${version}
 main: com.leonardobishop.quests.bukkit.BukkitQuestsPlugin
 website: https://github.com/LMBishop/Quests
 author: "LMBishop & contributors"
-softdepend: [PlaceholderAPI]
+softdepend: [ PlaceholderAPI ]
 prefix: Quests
 api-version: "1.13" # allows new API features but Quests will still work pre-1.13
 
@@ -15,7 +15,7 @@ commands:
     description: Interact with your quests
     usage: /quests
     permission: quests.command
-    aliases: [q, quest]
+    aliases: [ q, quest ]
 
 #todo redo perms
 permissions:
@@ -26,5 +26,5 @@ permissions:
     description: Permission to execute /q random
     default: true
   quests.admin:
-    description: Permission for the admin commands 
+    description: Permission for the admin commands
     default: op

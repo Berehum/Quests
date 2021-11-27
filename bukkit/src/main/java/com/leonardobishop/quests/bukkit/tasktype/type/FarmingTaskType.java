@@ -54,35 +54,36 @@ public final class FarmingTaskType extends BukkitTaskType {
         }
 
         for (Quest quest : super.getRegisteredQuests()) {
-            if (qPlayer.hasStartedQuest(quest)) {
-                QuestProgress questProgress = qPlayer.getQuestProgressFile().getQuestProgress(quest);
+            if (!qPlayer.hasStartedQuest(quest)) continue;
+            QuestProgress questProgress = qPlayer.getQuestProgressFile().getQuestProgress(quest);
 
-                for (Task task : quest.getTasksOfType(super.getType())) {
-                    if (!TaskUtils.validateWorld(event.getPlayer(), task)) continue;
+            for (Task task : quest.getTasksOfType(super.getType())) {
+                if (!TaskUtils.validateWorld(event.getPlayer(), task)) continue;
 
-                    TaskProgress taskProgress = questProgress.getTaskProgress(task.getId());
+                TaskProgress taskProgress = questProgress.getTaskProgress(task.getId());
 
-                    if (taskProgress.isCompleted()) {
-                        continue;
-                    }
+                if (taskProgress.isCompleted()) {
+                    continue;
+                }
 
-                    int brokenBlocksNeeded = (int) task.getConfigValue("amount");
+                int brokenBlocksNeeded = (int) task.getConfigValue("amount");
 
-                    int progressBlocksBroken;
-                    if (taskProgress.getProgress() == null) {
-                        progressBlocksBroken = 0;
-                    } else {
-                        progressBlocksBroken = (int) taskProgress.getProgress();
-                    }
+                int progressBlocksBroken;
+                if (taskProgress.getProgress() == null) {
+                    progressBlocksBroken = 0;
+                } else {
+                    progressBlocksBroken = (int) taskProgress.getProgress();
+                }
 
-                    taskProgress.setProgress(progressBlocksBroken + 1);
+                taskProgress.setProgress(progressBlocksBroken + 1);
 
-                    if (((int) taskProgress.getProgress()) >= brokenBlocksNeeded) {
-                        taskProgress.setCompleted(true);
-                    }
+                if (((int) taskProgress.getProgress()) >= brokenBlocksNeeded) {
+                    taskProgress.setProgress(brokenBlocksNeeded);
+                    taskProgress.setCompleted(true);
                 }
             }
         }
+
     }
 
 }

@@ -6,7 +6,6 @@ import com.leonardobishop.quests.bukkit.util.TaskUtils;
 import com.leonardobishop.quests.common.config.ConfigProblem;
 import com.leonardobishop.quests.common.player.QPlayer;
 import com.leonardobishop.quests.common.player.questprogressfile.QuestProgress;
-import com.leonardobishop.quests.common.player.questprogressfile.QuestProgressFile;
 import com.leonardobishop.quests.common.player.questprogressfile.TaskProgress;
 import com.leonardobishop.quests.common.quest.Quest;
 import com.leonardobishop.quests.common.quest.Task;
@@ -55,37 +54,36 @@ public final class MilkingTaskType extends BukkitTaskType {
             return;
         }
 
-        QuestProgressFile questProgressFile = qPlayer.getQuestProgressFile();
-
         for (Quest quest : super.getRegisteredQuests()) {
-            if (qPlayer.hasStartedQuest(quest)) {
-                QuestProgress questProgress = qPlayer.getQuestProgressFile().getQuestProgress(quest);
+            if (!qPlayer.hasStartedQuest(quest)) continue;
+            QuestProgress questProgress = qPlayer.getQuestProgressFile().getQuestProgress(quest);
 
-                for (Task task : quest.getTasksOfType(super.getType())) {
-                    if (!TaskUtils.validateWorld(player, task)) continue;
+            for (Task task : quest.getTasksOfType(super.getType())) {
+                if (!TaskUtils.validateWorld(player, task)) continue;
 
-                    TaskProgress taskProgress = questProgress.getTaskProgress(task.getId());
+                TaskProgress taskProgress = questProgress.getTaskProgress(task.getId());
 
-                    if (taskProgress.isCompleted()) {
-                        continue;
-                    }
+                if (taskProgress.isCompleted()) {
+                    continue;
+                }
 
-                    int cowsNeeded = (int) task.getConfigValue("amount");
+                int cowsNeeded = (int) task.getConfigValue("amount");
 
-                    int progressMilked;
-                    if (taskProgress.getProgress() == null) {
-                        progressMilked = 0;
-                    } else {
-                        progressMilked = (int) taskProgress.getProgress();
-                    }
+                int progressMilked;
+                if (taskProgress.getProgress() == null) {
+                    progressMilked = 0;
+                } else {
+                    progressMilked = (int) taskProgress.getProgress();
+                }
 
-                    taskProgress.setProgress(progressMilked + 1);
+                taskProgress.setProgress(progressMilked + 1);
 
-                    if (((int) taskProgress.getProgress()) >= cowsNeeded) {
-                        taskProgress.setCompleted(true);
-                    }
+                if (((int) taskProgress.getProgress()) >= cowsNeeded) {
+                    taskProgress.setProgress(cowsNeeded);
+                    taskProgress.setCompleted(true);
                 }
             }
+
         }
     }
 

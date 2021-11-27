@@ -14,6 +14,10 @@ public class PlayerStartTrackQuestEvent extends PlayerQuestEvent {
         this.qPlayer = qPlayer;
     }
 
+    public static HandlerList getHandlerList() {
+        return handlers;
+    }
+
     public QPlayer getQPlayer() {
         return qPlayer;
     }
@@ -21,10 +25,6 @@ public class PlayerStartTrackQuestEvent extends PlayerQuestEvent {
     @NotNull
     @Override
     public HandlerList getHandlers() {
-        return handlers;
-    }
-
-    public static HandlerList getHandlerList() {
         return handlers;
     }
 

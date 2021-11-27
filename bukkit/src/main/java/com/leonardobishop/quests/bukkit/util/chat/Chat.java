@@ -14,7 +14,8 @@ public class Chat {
     private static final ColorAdapter colorAdapter;
 
     static {
-        String version = Bukkit.getServer().getClass().getPackage().getName().replace(".", ",").split(",")[3];;
+        String version = Bukkit.getServer().getClass().getPackage().getName().replace(".", ",").split(",")[3];
+        ;
         if (version.startsWith("v1_7") || version.startsWith("v1_8") || version.startsWith("v1_9")
                 || version.startsWith("v1_10") || version.startsWith("v1_11") || version.startsWith("v1_12")
                 || version.startsWith("v1_13") || version.startsWith("v1_14") || version.startsWith("v1_15")) {

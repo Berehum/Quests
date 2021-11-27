@@ -1,6 +1,6 @@
 name: Documentation
 description: Suggest changes to the documentation/wiki
-labels: ['docs', 'status: needs investigating']
+labels: [ 'docs', 'status: needs investigating' ]
 body:
   - type: dropdown
     id: type

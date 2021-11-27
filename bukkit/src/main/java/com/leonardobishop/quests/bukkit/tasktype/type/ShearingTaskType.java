@@ -53,34 +53,29 @@ public final class ShearingTaskType extends BukkitTaskType {
         }
 
         for (Quest quest : super.getRegisteredQuests()) {
-            if (qPlayer.hasStartedQuest(quest)) {
-                QuestProgress questProgress = qPlayer.getQuestProgressFile().getQuestProgress(quest);
+            if (!qPlayer.hasStartedQuest(quest)) continue;
+            QuestProgress questProgress = qPlayer.getQuestProgressFile().getQuestProgress(quest);
 
-                for (Task task : quest.getTasksOfType(super.getType())) {
-                    if (!TaskUtils.validateWorld(player, task)) continue;
+            for (Task task : quest.getTasksOfType(super.getType())) {
+                if (!TaskUtils.validateWorld(player, task)) continue;
 
-                    TaskProgress taskProgress = questProgress.getTaskProgress(task.getId());
+                TaskProgress taskProgress = questProgress.getTaskProgress(task.getId());
 
-                    if (taskProgress.isCompleted()) {
-                        continue;
-                    }
+                if (taskProgress.isCompleted()) {
+                    continue;
+                }
 
-                    int sheepNeeded = (int) task.getConfigValue("amount");
+                int sheepNeeded = (int) task.getConfigValue("amount");
 
-                    int progressSheared;
-                    if (taskProgress.getProgress() == null) {
-                        progressSheared = 0;
-                    } else {
-                        progressSheared = (int) taskProgress.getProgress();
-                    }
+                int progressSheared = (taskProgress.getProgress() == null) ? 0 : (int) taskProgress.getProgress();
+                taskProgress.setProgress(progressSheared + 1);
 
-                    taskProgress.setProgress(progressSheared + 1);
-
-                    if (((int) taskProgress.getProgress()) >= sheepNeeded) {
-                        taskProgress.setCompleted(true);
-                    }
+                if (((int) taskProgress.getProgress()) >= sheepNeeded) {
+                    taskProgress.setProgress(sheepNeeded);
+                    taskProgress.setCompleted(true);
                 }
             }
+
         }
     }
 

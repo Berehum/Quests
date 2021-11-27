@@ -48,7 +48,7 @@ public final class FishingTaskType extends BukkitTaskType {
 //        if (!(hookLocation.getBlock().getType() == Material.WATER)) {
 //            return;
 //        }
-        
+
         Player player = event.getPlayer();
 
         QPlayer qPlayer = plugin.getPlayerManager().getPlayer(player.getUniqueId());
@@ -57,34 +57,34 @@ public final class FishingTaskType extends BukkitTaskType {
         }
 
         for (Quest quest : super.getRegisteredQuests()) {
-            if (qPlayer.hasStartedQuest(quest)) {
-                QuestProgress questProgress = qPlayer.getQuestProgressFile().getQuestProgress(quest);
+            if (!qPlayer.hasStartedQuest(quest)) continue;
+            QuestProgress questProgress = qPlayer.getQuestProgressFile().getQuestProgress(quest);
 
-                for (Task task : quest.getTasksOfType(super.getType())) {
-                    if (!TaskUtils.validateWorld(player, task)) continue;
+            for (Task task : quest.getTasksOfType(super.getType())) {
+                if (!TaskUtils.validateWorld(player, task)) continue;
 
-                    TaskProgress taskProgress = questProgress.getTaskProgress(task.getId());
+                TaskProgress taskProgress = questProgress.getTaskProgress(task.getId());
 
-                    if (taskProgress.isCompleted()) {
-                        continue;
-                    }
+                if (taskProgress.isCompleted()) {
+                    continue;
+                }
 
-                    int catchesNeeded = (int) task.getConfigValue("amount");
+                int catchesNeeded = (int) task.getConfigValue("amount");
 
-                    int progressCatches;
-                    if (taskProgress.getProgress() == null) {
-                        progressCatches = 0;
-                    } else {
-                        progressCatches = (int) taskProgress.getProgress();
-                    }
+                int progressCatches;
+                if (taskProgress.getProgress() == null) {
+                    progressCatches = 0;
+                } else {
+                    progressCatches = (int) taskProgress.getProgress();
+                }
 
-                    taskProgress.setProgress(progressCatches + 1);
+                taskProgress.setProgress(progressCatches + 1);
 
-                    if (((int) taskProgress.getProgress()) >= catchesNeeded) {
-                        taskProgress.setCompleted(true);
-                    }
+                if (((int) taskProgress.getProgress()) >= catchesNeeded) {
+                    taskProgress.setCompleted(true);
                 }
             }
+
         }
     }
 

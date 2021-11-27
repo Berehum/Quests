@@ -45,7 +45,7 @@ public final class MobkillingTaskType extends BukkitTaskType {
         Player killer = event.getEntity().getKiller(); //The killer is a player
         Entity mob = event.getEntity();
 
-        if (mob == null || mob instanceof Player) {
+        if (mob instanceof Player) {
             return;
         }
 
@@ -61,47 +61,40 @@ public final class MobkillingTaskType extends BukkitTaskType {
         }
 
         for (Quest quest : super.getRegisteredQuests()) {
-            if (qPlayer.hasStartedQuest(quest)) {
-                QuestProgress questProgress = qPlayer.getQuestProgressFile().getQuestProgress(quest);
+            if (!qPlayer.hasStartedQuest(quest)) continue;
+            QuestProgress questProgress = qPlayer.getQuestProgressFile().getQuestProgress(quest);
 
-                for (Task task : quest.getTasksOfType(super.getType())) {
-                    if (!TaskUtils.validateWorld(killer, task)) continue;
+            for (Task task : quest.getTasksOfType(super.getType())) {
+                if (!TaskUtils.validateWorld(killer, task)) continue;
 
-                    TaskProgress taskProgress = questProgress.getTaskProgress(task.getId());
+                TaskProgress taskProgress = questProgress.getTaskProgress(task.getId());
 
-                    if (taskProgress.isCompleted()) {
+                if (taskProgress.isCompleted()) {
+                    continue;
+                }
+
+                boolean hostilitySpecified = false;
+                boolean hostile = false;
+                if (task.getConfigValue("hostile") != null) {
+                    hostilitySpecified = true;
+                    hostile = (boolean) task.getConfigValue("hostile");
+                }
+
+                if (hostilitySpecified) {
+                    if (!hostile && !(mob instanceof Animals)) {
+                        continue;
+                    } else if (hostile && !(mob instanceof Monster)) {
                         continue;
                     }
+                }
 
-                    boolean hostilitySpecified = false;
-                    boolean hostile = false;
-                    if (task.getConfigValue("hostile") != null) {
-                        hostilitySpecified = true;
-                        hostile = (boolean) task.getConfigValue("hostile");
-                    }
+                int progressKills = (taskProgress.getProgress() == null) ? 0 : (int) taskProgress.getProgress();
+                taskProgress.setProgress(progressKills + 1);
 
-                    if (hostilitySpecified) {
-                        if (!hostile && !(mob instanceof Animals)) {
-                            continue;
-                        } else if (hostile && !(mob instanceof Monster)) {
-                            continue;
-                        }
-                    }
-
-                    int mobKillsNeeded = (int) task.getConfigValue("amount");
-
-                    int progressKills;
-                    if (taskProgress.getProgress() == null) {
-                        progressKills = 0;
-                    } else {
-                        progressKills = (int) taskProgress.getProgress();
-                    }
-
-                    taskProgress.setProgress(progressKills + 1);
-
-                    if (((int) taskProgress.getProgress()) >= mobKillsNeeded) {
-                        taskProgress.setCompleted(true);
-                    }
+                int mobKillsNeeded = (int) task.getConfigValue("amount");
+                if (((int) taskProgress.getProgress()) >= mobKillsNeeded) {
+                    taskProgress.setProgress(mobKillsNeeded);
+                    taskProgress.setCompleted(true);
                 }
             }
         }

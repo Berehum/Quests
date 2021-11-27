@@ -62,11 +62,11 @@ public final class MiningCertainTaskType extends BukkitTaskType {
                 }
             }
         }
-        TaskUtils.configValidateBoolean(root + ".reverse-if-placed", config.get("reverse-if-placed"), problems, true,"reverse-if-placed");
-        TaskUtils.configValidateBoolean(root + ".check-coreprotect", config.get("check-coreprotect"), problems, true,"check-coreprotect");
-        TaskUtils.configValidateInt(root + ".check-coreprotect-time", config.get("check-coreprotect-time"), problems, true,true, "check-coreprotect-time");
-        TaskUtils.configValidateBoolean(root + ".use-similar-blocks", config.get("use-similar-blocks"), problems, true,"use-similar-blocks");
-        TaskUtils.configValidateInt(root + ".data", config.get("data"), problems, true,true, "data");
+        TaskUtils.configValidateBoolean(root + ".reverse-if-placed", config.get("reverse-if-placed"), problems, true, "reverse-if-placed");
+        TaskUtils.configValidateBoolean(root + ".check-coreprotect", config.get("check-coreprotect"), problems, true, "check-coreprotect");
+        TaskUtils.configValidateInt(root + ".check-coreprotect-time", config.get("check-coreprotect-time"), problems, true, true, "check-coreprotect-time");
+        TaskUtils.configValidateBoolean(root + ".use-similar-blocks", config.get("use-similar-blocks"), problems, true, "use-similar-blocks");
+        TaskUtils.configValidateInt(root + ".data", config.get("data"), problems, true, true, "data");
         return problems;
     }
 
@@ -80,32 +80,32 @@ public final class MiningCertainTaskType extends BukkitTaskType {
         }
 
         for (Quest quest : super.getRegisteredQuests()) {
-            if (qPlayer.hasStartedQuest(quest)) {
-                QuestProgress questProgress = qPlayer.getQuestProgressFile().getQuestProgress(quest);
+            if (!qPlayer.hasStartedQuest(quest)) continue;
+            QuestProgress questProgress = qPlayer.getQuestProgressFile().getQuestProgress(quest);
 
-                for (Task task : quest.getTasksOfType(super.getType())) {
-                    if (!TaskUtils.validateWorld(event.getPlayer(), task)) continue;
+            for (Task task : quest.getTasksOfType(super.getType())) {
+                if (!TaskUtils.validateWorld(event.getPlayer(), task)) continue;
 
-                    TaskProgress taskProgress = questProgress.getTaskProgress(task.getId());
+                TaskProgress taskProgress = questProgress.getTaskProgress(task.getId());
 
-                    if (taskProgress.isCompleted()) {
+                if (taskProgress.isCompleted()) {
+                    continue;
+                }
+
+                if (matchBlock(task, event.getBlock())) {
+                    boolean coreProtectEnabled = (boolean) task.getConfigValue("check-coreprotect", false);
+                    int coreProtectTime = (int) task.getConfigValue("check-coreprotect-time", 3600);
+
+                    if (coreProtectEnabled
+                            && plugin.getCoreProtectHook() != null
+                            && plugin.getCoreProtectHook().checkBlock(event.getBlock(), coreProtectTime)) {
                         continue;
                     }
-
-                    if (matchBlock(task, event.getBlock())) {
-                        boolean coreProtectEnabled = (boolean) task.getConfigValue("check-coreprotect", false);
-                        int coreProtectTime = (int) task.getConfigValue("check-coreprotect-time", 3600);
-
-                        if (coreProtectEnabled
-                                && plugin.getCoreProtectHook() != null
-                                && plugin.getCoreProtectHook().checkBlock(event.getBlock(), coreProtectTime)) {
-                            continue;
-                        }
-                        increment(task, taskProgress, 1);
-                    }
+                    increment(task, taskProgress, 1);
                 }
             }
         }
+
     }
 
     // subtract if enabled
@@ -171,8 +171,8 @@ public final class MiningCertainTaskType extends BukkitTaskType {
             short blockData = block.getData();
 
             if (blockType == material) {
-            	if (((split.length == 1 && configData == null) || ((int) blockData) == comparableData))
-                	return true;
+                if (((split.length == 1 && configData == null) || ((int) blockData) == comparableData))
+                    return true;
             }
         }
         return false;
@@ -191,6 +191,7 @@ public final class MiningCertainTaskType extends BukkitTaskType {
         taskProgress.setProgress(progressBlocksBroken + amount);
 
         if (((int) taskProgress.getProgress()) >= brokenBlocksNeeded) {
+            taskProgress.setProgress(brokenBlocksNeeded);
             taskProgress.setCompleted(true);
         }
     }

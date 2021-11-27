@@ -80,7 +80,7 @@ public class QPlayerManager {
      * Schedules a save for the player with a specified {@link QuestProgressFile}. The modified status of the
      * specified progress file will be reset.
      *
-     * @param uuid the uuid of the player
+     * @param uuid                 the uuid of the player
      * @param originalProgressFile the quest progress file to associate with and save
      */
     public void savePlayer(@NotNull UUID uuid, @NotNull QuestProgressFile originalProgressFile) {
@@ -110,7 +110,7 @@ public class QPlayerManager {
      * Immediately saves the player with a specified {@link QuestProgressFile}, on the same thread. The modified status
      * of the specified progress file is not changed.
      *
-     * @param uuid the uuid of the player
+     * @param uuid              the uuid of the player
      * @param questProgressFile the quest progress file to associate with and save
      */
     public void savePlayerSync(@NotNull UUID uuid, @NotNull QuestProgressFile questProgressFile) {

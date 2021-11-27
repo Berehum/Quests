@@ -68,7 +68,8 @@ public class ItemGetter_1_13 implements ItemGetter {
                 } else if (cOwnerUuid != null) {
                     try {
                         sm.setOwningPlayer(Bukkit.getOfflinePlayer(UUID.fromString(cOwnerUuid)));
-                    } catch (IllegalArgumentException ignored) { }
+                    } catch (IllegalArgumentException ignored) {
+                    }
                 } else {
                     GameProfile profile = new GameProfile(UUID.randomUUID(), "");
                     profile.getProperties().put("textures", new Property("textures", cOwnerBase64));

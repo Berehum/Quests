@@ -53,35 +53,35 @@ public final class DealDamageTaskType extends BukkitTaskType {
         }
 
         for (Quest quest : super.getRegisteredQuests()) {
-            if (qPlayer.hasStartedQuest(quest)) {
-                QuestProgress questProgress = qPlayer.getQuestProgressFile().getQuestProgress(quest);
+            if (!qPlayer.hasStartedQuest(quest)) continue;
+            QuestProgress questProgress = qPlayer.getQuestProgressFile().getQuestProgress(quest);
 
-                for (Task task : quest.getTasksOfType(super.getType())) {
-                    if (!TaskUtils.validateWorld(player, task)) continue;
+            for (Task task : quest.getTasksOfType(super.getType())) {
+                if (!TaskUtils.validateWorld(player, task)) continue;
 
-                    TaskProgress taskProgress = questProgress.getTaskProgress(task.getId());
+                TaskProgress taskProgress = questProgress.getTaskProgress(task.getId());
 
-                    if (taskProgress.isCompleted()) {
-                        continue;
-                    }
+                if (taskProgress.isCompleted()) {
+                    continue;
+                }
 
-                    double progressDamage;
-                    int damageNeeded = (int) task.getConfigValue("amount");
+                double progressDamage;
+                int damageNeeded = (int) task.getConfigValue("amount");
 
-                    if (taskProgress.getProgress() == null) {
-                        progressDamage = 0.0;
-                    } else {
-                        progressDamage = (double) taskProgress.getProgress();
-                    }
+                if (taskProgress.getProgress() == null) {
+                    progressDamage = 0.0;
+                } else {
+                    progressDamage = (double) taskProgress.getProgress();
+                }
 
-                    taskProgress.setProgress(progressDamage + damage);
+                taskProgress.setProgress(progressDamage + damage);
 
-                    if (((double) taskProgress.getProgress()) >= (double) damageNeeded) {
-                        taskProgress.setProgress(damageNeeded);
-                        taskProgress.setCompleted(true);
-                    }
+                if (((double) taskProgress.getProgress()) >= (double) damageNeeded) {
+                    taskProgress.setProgress(damageNeeded);
+                    taskProgress.setCompleted(true);
                 }
             }
         }
+
     }
 }

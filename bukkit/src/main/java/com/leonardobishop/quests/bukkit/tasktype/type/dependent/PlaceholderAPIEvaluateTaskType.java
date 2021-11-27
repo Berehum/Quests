@@ -85,7 +85,8 @@ public final class PlaceholderAPIEvaluateTaskType extends BukkitTaskType {
                                 if (configOperator != null) {
                                     try {
                                         operator = Operator.valueOf(configOperator);
-                                    } catch (IllegalArgumentException ignored) { }
+                                    } catch (IllegalArgumentException ignored) {
+                                    }
                                 }
                                 if (placeholder != null && evaluates != null) {
                                     double numericEvaluates = 0;

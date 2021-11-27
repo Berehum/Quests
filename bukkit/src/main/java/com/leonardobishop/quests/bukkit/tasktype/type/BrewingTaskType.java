@@ -55,8 +55,8 @@ public final class BrewingTaskType extends BukkitTaskType {
 
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onBlockPlace(BrewEvent event) {
-        UUID uuid;
-        if ((uuid = brewingStands.get(event.getBlock().getLocation())) != null) {
+        UUID uuid = brewingStands.get(event.getBlock().getLocation());
+        if (uuid != null) {
             Player player = Bukkit.getPlayer(uuid);
 
             if (player == null || player.hasMetadata("NPC")) {
@@ -69,39 +69,40 @@ public final class BrewingTaskType extends BukkitTaskType {
             }
 
             for (Quest quest : super.getRegisteredQuests()) {
-                if (qPlayer.hasStartedQuest(quest)) {
-                    QuestProgress questProgress = qPlayer.getQuestProgressFile().getQuestProgress(quest);
+                if (!qPlayer.hasStartedQuest(quest)) continue;
+                QuestProgress questProgress = qPlayer.getQuestProgressFile().getQuestProgress(quest);
 
-                    for (Task task : quest.getTasksOfType(super.getType())) {
-                        if (!TaskUtils.validateWorld(player, task)) continue;
+                for (Task task : quest.getTasksOfType(super.getType())) {
+                    if (!TaskUtils.validateWorld(player, task)) continue;
 
-                        TaskProgress taskProgress = questProgress.getTaskProgress(task.getId());
+                    TaskProgress taskProgress = questProgress.getTaskProgress(task.getId());
 
-                        if (taskProgress.isCompleted()) {
-                            continue;
-                        }
+                    if (taskProgress.isCompleted()) {
+                        continue;
+                    }
 
-                        int potionsNeeded = (int) task.getConfigValue("amount");
+                    int potionsNeeded = (int) task.getConfigValue("amount");
 
-                        int progress;
-                        if (taskProgress.getProgress() == null) {
-                            progress = 0;
-                        } else {
-                            progress = (int) taskProgress.getProgress();
-                        }
+                    int progress;
+                    if (taskProgress.getProgress() == null) {
+                        progress = 0;
+                    } else {
+                        progress = (int) taskProgress.getProgress();
+                    }
 
-                        ItemStack potion1 = event.getContents().getItem(0);
-                        ItemStack potion2 = event.getContents().getItem(1);
-                        ItemStack potion3 = event.getContents().getItem(2);
+                    ItemStack potion1 = event.getContents().getItem(0);
+                    ItemStack potion2 = event.getContents().getItem(1);
+                    ItemStack potion3 = event.getContents().getItem(2);
 
-                        taskProgress.setProgress(progress + (potion1 == null ? 0 : 1) + (potion2 == null ? 0 : 1) + (potion3 == null ? 0 : 1));
+                    taskProgress.setProgress(progress + (potion1 == null ? 0 : 1) + (potion2 == null ? 0 : 1) + (potion3 == null ? 0 : 1));
 
-                        if (((int) taskProgress.getProgress()) >= potionsNeeded) {
-                            taskProgress.setCompleted(true);
-                        }
+                    if (((int) taskProgress.getProgress()) >= potionsNeeded) {
+                        taskProgress.setProgress(potionsNeeded);
+                        taskProgress.setCompleted(true);
                     }
                 }
             }
+
         }
     }
 

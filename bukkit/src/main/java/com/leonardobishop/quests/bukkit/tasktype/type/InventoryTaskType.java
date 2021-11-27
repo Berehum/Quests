@@ -81,55 +81,56 @@ public final class InventoryTaskType extends BukkitTaskType {
         }
 
         for (Quest quest : super.getRegisteredQuests()) {
-            if (qPlayer.hasStartedQuest(quest)) {
-                QuestProgress questProgress = qPlayer.getQuestProgressFile().getQuestProgress(quest);
+            if (!qPlayer.hasStartedQuest(quest)) continue;
+            QuestProgress questProgress = qPlayer.getQuestProgressFile().getQuestProgress(quest);
 
-                for (Task task : quest.getTasksOfType(super.getType())) {
-                    if (!TaskUtils.validateWorld(player, task)) continue;
+            for (Task task : quest.getTasksOfType(super.getType())) {
+                if (!TaskUtils.validateWorld(player, task)) continue;
 
-                    TaskProgress taskProgress = questProgress.getTaskProgress(task.getId());
+                TaskProgress taskProgress = questProgress.getTaskProgress(task.getId());
 
-                    if (taskProgress.isCompleted()) {
-                        continue;
-                    }
+                if (taskProgress.isCompleted()) {
+                    continue;
+                }
 
-                    Material material;
-                    int amount = (int) task.getConfigValue("amount");
-                    Object configBlock = task.getConfigValue("item");
-                    Object configData = task.getConfigValue("data");
-                    Object remove = task.getConfigValue("remove-items-when-complete");
+                Material material;
+                int amount = (int) task.getConfigValue("amount");
+                Object configBlock = task.getConfigValue("item");
+                Object configData = task.getConfigValue("data");
+                Object remove = task.getConfigValue("remove-items-when-complete");
 
-                    QuestItem qi;
-                    if ((qi = fixedQuestItemCache.get(quest.getId(), task.getId())) == null) {
-                        if (configBlock instanceof ConfigurationSection) {
-                            qi = plugin.getConfiguredQuestItem("", (ConfigurationSection) configBlock);
-                        } else {
-                            material = Material.getMaterial(String.valueOf(configBlock));
-                            ItemStack is;
-                            if (material == null) {
-                                continue;
-                            }
-                            if (configData != null) {
-                                is = new ItemStack(material, 1, ((Integer) configData).shortValue());
-                            } else {
-                                is = new ItemStack(material, 1);
-                            }
-                            qi = new ParsedQuestItem("parsed", null, is);
+                QuestItem qi;
+                if ((qi = fixedQuestItemCache.get(quest.getId(), task.getId())) == null) {
+                    if (configBlock instanceof ConfigurationSection) {
+                        qi = plugin.getConfiguredQuestItem("", (ConfigurationSection) configBlock);
+                    } else {
+                        material = Material.getMaterial(String.valueOf(configBlock));
+                        ItemStack is;
+                        if (material == null) {
+                            continue;
                         }
-                        fixedQuestItemCache.put(quest.getId(), task.getId(), qi);
+                        if (configData != null) {
+                            is = new ItemStack(material, 1, ((Integer) configData).shortValue());
+                        } else {
+                            is = new ItemStack(material, 1);
+                        }
+                        qi = new ParsedQuestItem("parsed", null, is);
                     }
+                    fixedQuestItemCache.put(quest.getId(), task.getId(), qi);
+                }
 
-                    int[] amountPerSlot = getAmountsPerSlot(player, qi);
-                    int total = Math.min(amountPerSlot[36], amount);
-                    taskProgress.setProgress(total);
+                int[] amountPerSlot = getAmountsPerSlot(player, qi);
+                int total = Math.min(amountPerSlot[36], amount);
+                taskProgress.setProgress(total);
 
-                    if (total >= amount) {
-                        taskProgress.setCompleted(true);
+                if (total >= amount) {
+                    taskProgress.setProgress(amount);
+                    taskProgress.setCompleted(true);
 
-                        if (remove != null && ((Boolean) remove)) removeItemsInSlots(player, amountPerSlot, total);
-                    }
+                    if (remove != null && ((Boolean) remove)) removeItemsInSlots(player, amountPerSlot, total);
                 }
             }
+
         }
     }
 

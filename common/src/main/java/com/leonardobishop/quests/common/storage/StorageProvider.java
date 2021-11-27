@@ -26,7 +26,8 @@ public interface StorageProvider {
 
     /**
      * Save a QuestProgressFile to the data source with a specific UUID
-     * @param uuid the uuid to match the file to
+     *
+     * @param uuid              the uuid to match the file to
      * @param questProgressFile the file to save
      */
     void saveProgressFile(@NotNull UUID uuid, @NotNull QuestProgressFile questProgressFile);

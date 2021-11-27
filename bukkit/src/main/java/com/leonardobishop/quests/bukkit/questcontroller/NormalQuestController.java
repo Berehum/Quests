@@ -244,7 +244,8 @@ public class NormalQuestController implements QuestController {
             if (quest.isAutoStartEnabled()) {
                 QuestStartResult response = canPlayerStartQuest(qPlayer, quest);
                 return response == QuestStartResult.QUEST_SUCCESS || response == QuestStartResult.QUEST_ALREADY_STARTED;
-            } else return qPlayer.getQuestProgressFile().hasQuestProgress(quest) && qPlayer.getQuestProgressFile().getQuestProgress(quest).isStarted();
+            } else
+                return qPlayer.getQuestProgressFile().hasQuestProgress(quest) && qPlayer.getQuestProgressFile().getQuestProgress(quest).isStarted();
         }
     }
 

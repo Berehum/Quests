@@ -21,14 +21,13 @@ import java.util.regex.Pattern;
 public class QItemStack {
 
     private final BukkitQuestsPlugin plugin;
-
-    private String name;
-    private List<String> loreNormal;
-    private List<String> loreStarted;
     private final List<String> globalLoreAppendNormal;
     private final List<String> globalLoreAppendNotStarted;
     private final List<String> globalLoreAppendStarted;
     private final List<String> globalLoreAppendTracked;
+    private String name;
+    private List<String> loreNormal;
+    private List<String> loreStarted;
     private ItemStack startingItemStack;
 
     public QItemStack(BukkitQuestsPlugin plugin, String name, List<String> loreNormal, List<String> loreStarted, ItemStack startingItemStack) {
@@ -42,6 +41,39 @@ public class QItemStack {
         this.globalLoreAppendNotStarted = Chat.color(plugin.getQuestsConfig().getStringList("global-quest-display.lore.append-not-started"));
         this.globalLoreAppendStarted = Chat.color(plugin.getQuestsConfig().getStringList("global-quest-display.lore.append-started"));
         this.globalLoreAppendTracked = Chat.color(plugin.getQuestsConfig().getStringList("global-quest-display.lore.append-tracked"));
+    }
+
+    public static String processPlaceholders(String s, QuestProgress questProgress) {
+        Matcher m = Pattern.compile("\\{([^}]+)}").matcher(s);
+        while (m.find()) {
+            String[] parts = m.group(1).split(":");
+            if (parts.length > 1) {
+                if (questProgress.getTaskProgress(parts[0]) == null) {
+                    continue;
+                }
+                if (parts[1].equals("progress")) {
+                    Object progress = questProgress.getTaskProgress(parts[0]).getProgress();
+                    String str;
+                    if (progress instanceof Float || progress instanceof Double) {
+                        str = String.format(String.valueOf(progress), "%.2f");
+                    } else {
+                        str = String.valueOf(progress);
+                    }
+
+                    s = s.replace("{" + m.group(1) + "}", (progress == null ? String.valueOf(0) : str));
+                }
+                if (parts[1].equals("complete")) {
+                    String str;
+                    if (questProgress.getTaskProgress(parts[0]).isCompleted()) {
+                        str = Chat.color(Messages.UI_PLACEHOLDERS_TRUE.getMessage());
+                    } else {
+                        str = Chat.color(Messages.UI_PLACEHOLDERS_FALSE.getMessage());
+                    }
+                    s = s.replace("{" + m.group(1) + "}", str);
+                }
+            }
+        }
+        return s;
     }
 
     public String getName() {
@@ -92,7 +124,7 @@ public class QItemStack {
         Player player = Bukkit.getPlayer(qPlayer.getPlayerUUID());
         if (qPlayer.hasStartedQuest(quest)) {
             boolean tracked = quest.getId().equals(qPlayer.getPlayerPreferences().getTrackedQuestId());
-            if (!plugin.getQuestsConfig().getBoolean("options.global-task-configuration-override")|| globalLoreAppendStarted.isEmpty()) {
+            if (!plugin.getQuestsConfig().getBoolean("options.global-task-configuration-override") || globalLoreAppendStarted.isEmpty()) {
                 tempLore.addAll(loreStarted);
             }
             if (tracked) {
@@ -104,7 +136,8 @@ public class QItemStack {
             try {
                 ism.addItemFlags(ItemFlag.HIDE_ENCHANTS);
                 ism.addItemFlags(ItemFlag.HIDE_ATTRIBUTES);
-            } catch (Exception ignored) { }
+            } catch (Exception ignored) {
+            }
         } else {
             tempLore.addAll(globalLoreAppendNotStarted);
         }
@@ -123,38 +156,5 @@ public class QItemStack {
         ism.setLore(formattedLore);
         is.setItemMeta(ism);
         return is;
-    }
-
-    public static String processPlaceholders(String s, QuestProgress questProgress) {
-        Matcher m = Pattern.compile("\\{([^}]+)}").matcher(s);
-        while (m.find()) {
-            String[] parts = m.group(1).split(":");
-            if (parts.length > 1) {
-                if (questProgress.getTaskProgress(parts[0]) == null) {
-                    continue;
-                }
-                if (parts[1].equals("progress")) {
-                    Object progress = questProgress.getTaskProgress(parts[0]).getProgress();
-                    String str;
-                    if (progress instanceof Float || progress instanceof Double) {
-                        str = String.format(String.valueOf(progress), "%.2f");
-                    } else {
-                        str = String.valueOf(progress);
-                    }
-
-                    s = s.replace("{" + m.group(1) + "}", (progress == null ? String.valueOf(0) : str));
-                }
-                if (parts[1].equals("complete")) {
-                    String str;
-                    if (questProgress.getTaskProgress(parts[0]).isCompleted()) {
-                        str = Chat.color(Messages.UI_PLACEHOLDERS_TRUE.getMessage());
-                    } else {
-                        str = Chat.color(Messages.UI_PLACEHOLDERS_FALSE.getMessage());
-                    }
-                    s = s.replace("{" + m.group(1) + "}", str);
-                }
-            }
-        }
-        return s;
     }
 }

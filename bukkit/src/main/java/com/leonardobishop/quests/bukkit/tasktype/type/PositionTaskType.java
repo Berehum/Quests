@@ -61,38 +61,38 @@ public final class PositionTaskType extends BukkitTaskType {
         }
 
         for (Quest quest : super.getRegisteredQuests()) {
-            if (qPlayer.hasStartedQuest(quest)) {
-                QuestProgress questProgress = qPlayer.getQuestProgressFile().getQuestProgress(quest);
+            if (!qPlayer.hasStartedQuest(quest)) continue;
+            QuestProgress questProgress = qPlayer.getQuestProgressFile().getQuestProgress(quest);
 
-                for (Task task : quest.getTasksOfType(super.getType())) {
-                    TaskProgress taskProgress = questProgress.getTaskProgress(task.getId());
+            for (Task task : quest.getTasksOfType(super.getType())) {
+                TaskProgress taskProgress = questProgress.getTaskProgress(task.getId());
 
-                    if (taskProgress.isCompleted()) {
-                        continue;
-                    }
+                if (taskProgress.isCompleted()) {
+                    continue;
+                }
 
-                    int x = (int) task.getConfigValue("x");
-                    int y = (int) task.getConfigValue("y");
-                    int z = (int) task.getConfigValue("z");
-                    String worldString = (String) task.getConfigValue("world");
-                    int padding = 0;
-                    if (task.getConfigValue("distance-padding") != null) {
-                        padding = (int) task.getConfigValue("distance-padding");
-                    }
-                    int paddingSquared = padding * padding;
-                    World world = Bukkit.getWorld(worldString);
-                    if (world == null) {
-                        continue;
-                    }
+                int x = (int) task.getConfigValue("x");
+                int y = (int) task.getConfigValue("y");
+                int z = (int) task.getConfigValue("z");
+                String worldString = (String) task.getConfigValue("world");
+                int padding = 0;
+                if (task.getConfigValue("distance-padding") != null) {
+                    padding = (int) task.getConfigValue("distance-padding");
+                }
+                int paddingSquared = padding * padding;
+                World world = Bukkit.getWorld(worldString);
+                if (world == null) {
+                    continue;
+                }
 
-                    Location location = new Location(world, x, y, z);
-                    if (player.getWorld().equals(world) && player.getLocation().getBlockX() == location.getBlockX() && player.getLocation().getBlockY() == location.getBlockY() && player.getLocation().getBlockZ() == location.getBlockZ()) {
-                        taskProgress.setCompleted(true);
-                    } else if (padding != 0 && player.getWorld().equals(world) && player.getLocation().distanceSquared(location) < paddingSquared) {
-                        taskProgress.setCompleted(true);
-                    }
+                Location location = new Location(world, x, y, z);
+                if (player.getWorld().equals(world) && player.getLocation().getBlockX() == location.getBlockX() && player.getLocation().getBlockY() == location.getBlockY() && player.getLocation().getBlockZ() == location.getBlockZ()) {
+                    taskProgress.setCompleted(true);
+                } else if (padding != 0 && player.getWorld().equals(world) && player.getLocation().distanceSquared(location) < paddingSquared) {
+                    taskProgress.setCompleted(true);
                 }
             }
+
         }
     }
 

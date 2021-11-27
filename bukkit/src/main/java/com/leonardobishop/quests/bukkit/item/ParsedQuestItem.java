@@ -12,7 +12,7 @@ public class ParsedQuestItem extends QuestItem {
     }
 
     @Override
-    public ItemStack getItemStack()  {
+    public ItemStack getItemStack() {
         return itemStack;
     }
 

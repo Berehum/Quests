@@ -17,6 +17,10 @@ public class PlayerCancelQuestEvent extends PlayerQuestEvent {
         this.questCancelMessage = questCancelMessage;
     }
 
+    public static HandlerList getHandlerList() {
+        return handlers;
+    }
+
     /**
      * @return The quest progress
      */
@@ -42,10 +46,6 @@ public class PlayerCancelQuestEvent extends PlayerQuestEvent {
     @NotNull
     @Override
     public HandlerList getHandlers() {
-        return handlers;
-    }
-
-    public static HandlerList getHandlerList() {
         return handlers;
     }
 }

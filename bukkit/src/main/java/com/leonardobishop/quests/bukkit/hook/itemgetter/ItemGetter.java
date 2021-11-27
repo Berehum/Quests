@@ -9,8 +9,8 @@ public interface ItemGetter {
      * Gets an ItemStack from a configuration.
      * Implementations should specific to the server version.
      *
-     * @param path the path to where the item is defined in the config (null if item is defined in second param)
-     * @param config the configuration file
+     * @param path     the path to where the item is defined in the config (null if item is defined in second param)
+     * @param config   the configuration file
      * @param excludes exclude certain fields in the configuration
      * @return {@link ItemStack}
      */

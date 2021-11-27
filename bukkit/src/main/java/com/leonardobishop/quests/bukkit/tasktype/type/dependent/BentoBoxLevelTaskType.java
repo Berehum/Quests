@@ -30,19 +30,18 @@ public final class BentoBoxLevelTaskType extends BukkitTaskType {
         this.plugin = plugin;
     }
 
+    public static void register(BukkitQuestsPlugin plugin, TaskTypeManager manager) {
+        if (BentoBox.getInstance().getAddonsManager().getAddonByName("Level").isPresent()) {
+            manager.registerTaskType(new BentoBoxLevelTaskType(plugin));
+        }
+    }
+
     @Override
     public @NotNull List<ConfigProblem> validateConfig(@NotNull String root, @NotNull HashMap<String, Object> config) {
         ArrayList<ConfigProblem> problems = new ArrayList<>();
         if (TaskUtils.configValidateExists(root + ".level", config.get("level"), problems, "level", super.getType()))
             TaskUtils.configValidateInt(root + ".level", config.get("level"), problems, false, false, "level");
         return problems;
-    }
-
-
-    public static void register(BukkitQuestsPlugin plugin, TaskTypeManager manager) {
-        if (BentoBox.getInstance().getAddonsManager().getAddonByName("Level").isPresent()) {
-            manager.registerTaskType(new BentoBoxLevelTaskType(plugin));
-        }
     }
 
     // https://github.com/BentoBoxWorld/bentobox/issues/352

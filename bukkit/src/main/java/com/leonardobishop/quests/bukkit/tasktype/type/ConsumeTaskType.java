@@ -66,61 +66,55 @@ public final class ConsumeTaskType extends BukkitTaskType {
         if (qPlayer == null) return;
 
         for (Quest quest : super.getRegisteredQuests()) {
-            if (qPlayer.hasStartedQuest(quest)) {
-                QuestProgress questProgress = qPlayer.getQuestProgressFile().getQuestProgress(quest);
+            if (!qPlayer.hasStartedQuest(quest)) continue;
+            QuestProgress questProgress = qPlayer.getQuestProgressFile().getQuestProgress(quest);
 
-                for (Task task : quest.getTasksOfType(super.getType())) {
-                    if (!TaskUtils.validateWorld(player, task)) continue;
+            for (Task task : quest.getTasksOfType(super.getType())) {
+                if (!TaskUtils.validateWorld(player, task)) continue;
 
-                    TaskProgress taskProgress = questProgress.getTaskProgress(task.getId());
+                TaskProgress taskProgress = questProgress.getTaskProgress(task.getId());
 
-                    if (taskProgress.isCompleted()) {
-                        continue;
-                    }
+                if (taskProgress.isCompleted()) {
+                    continue;
+                }
 
-                    Material material;
-                    int amount = (int) task.getConfigValue("amount");
-                    Object configBlock = task.getConfigValue("item");
-                    Object configData = task.getConfigValue("data");
+                Material material;
+                Object configBlock = task.getConfigValue("item");
+                Object configData = task.getConfigValue("data");
 
-                    QuestItem qi;
-                    if ((qi = fixedQuestItemCache.get(quest.getId(), task.getId())) == null) {
-                        if (configBlock instanceof ConfigurationSection) {
-                            qi = plugin.getConfiguredQuestItem("", (ConfigurationSection) configBlock);
-                        } else {
-                            material = Material.getMaterial(String.valueOf(configBlock));
-                            ItemStack is;
-                            if (material == null) {
-                                continue;
-                            }
-                            if (configData != null) {
-                                is = new ItemStack(material, 1, ((Integer) configData).shortValue());
-                            } else {
-                                is = new ItemStack(material, 1);
-                            }
-                            qi = new ParsedQuestItem("parsed", null, is);
-                        }
-                        fixedQuestItemCache.put(quest.getId(), task.getId(), qi);
-                    }
-
-                    if (!qi.compareItemStack(event.getItem())) continue;
-
-                    int progress;
-                    if (taskProgress.getProgress() == null) {
-                        progress = 0;
+                QuestItem qi = fixedQuestItemCache.get(quest.getId(), task.getId());
+                if (qi == null) {
+                    if (configBlock instanceof ConfigurationSection) {
+                        qi = plugin.getConfiguredQuestItem("", (ConfigurationSection) configBlock);
                     } else {
-                        progress = (int) taskProgress.getProgress();
+                        material = Material.getMaterial(String.valueOf(configBlock));
+                        ItemStack is;
+                        if (material == null) {
+                            continue;
+                        }
+                        if (configData != null) {
+                            is = new ItemStack(material, 1, ((Integer) configData).shortValue());
+                        } else {
+                            is = new ItemStack(material, 1);
+                        }
+                        qi = new ParsedQuestItem("parsed", null, is);
                     }
+                    fixedQuestItemCache.put(quest.getId(), task.getId(), qi);
+                }
 
-                    taskProgress.setProgress(progress + 1);
+                if (!qi.compareItemStack(event.getItem())) continue;
 
-                    if ((int) taskProgress.getProgress() >= amount) {
-                        taskProgress.setProgress(amount);
-                        taskProgress.setCompleted(true);
-                    }
+                int progress = (taskProgress.getProgress() == null) ? 0 : (int) taskProgress.getProgress();
+                taskProgress.setProgress(progress + 1);
+
+                int amount = (int) task.getConfigValue("amount");
+                if ((int) taskProgress.getProgress() >= amount) {
+                    taskProgress.setProgress(amount);
+                    taskProgress.setCompleted(true);
                 }
             }
         }
+
     }
 
 }

@@ -25,7 +25,8 @@ public class SoundUtils {
                 case 2:
                     pitch = Float.parseFloat(parts[1]);
             }
-        } catch (NumberFormatException ignored) { }
+        } catch (NumberFormatException ignored) {
+        }
 
         Sound sound;
         try {

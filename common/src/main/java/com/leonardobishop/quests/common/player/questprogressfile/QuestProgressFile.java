@@ -84,30 +84,6 @@ public class QuestProgressFile {
         return questsProgress;
     }
 
-    public enum QuestsProgressFilter {
-        ALL("all"),
-        COMPLETED("completed"),
-        COMPLETED_BEFORE("completedBefore"),
-        STARTED("started");
-
-        private String legacy;
-
-        QuestsProgressFilter(String legacy) {
-            this.legacy = legacy;
-        }
-
-        public static QuestsProgressFilter fromLegacy(String filter) {
-            for (QuestsProgressFilter filterEnum : QuestsProgressFilter.values()) {
-                if (filterEnum.getLegacy().equals(filter)) return filterEnum;
-            }
-            return QuestsProgressFilter.ALL;
-        }
-
-        public String getLegacy() {
-            return legacy;
-        }
-    }
-
     /**
      * Gets all the quest progress that it has ever encountered.
      *
@@ -242,6 +218,30 @@ public class QuestProgressFile {
     public void resetModified() {
         for (QuestProgress questProgress : questProgress.values()) {
             questProgress.resetModified();
+        }
+    }
+
+    public enum QuestsProgressFilter {
+        ALL("all"),
+        COMPLETED("completed"),
+        COMPLETED_BEFORE("completedBefore"),
+        STARTED("started");
+
+        private String legacy;
+
+        QuestsProgressFilter(String legacy) {
+            this.legacy = legacy;
+        }
+
+        public static QuestsProgressFilter fromLegacy(String filter) {
+            for (QuestsProgressFilter filterEnum : QuestsProgressFilter.values()) {
+                if (filterEnum.getLegacy().equals(filter)) return filterEnum;
+            }
+            return QuestsProgressFilter.ALL;
+        }
+
+        public String getLegacy() {
+            return legacy;
         }
     }
 

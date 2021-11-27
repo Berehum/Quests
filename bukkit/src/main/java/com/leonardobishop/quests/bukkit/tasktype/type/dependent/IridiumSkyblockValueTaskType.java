@@ -44,7 +44,7 @@ public final class IridiumSkyblockValueTaskType extends BukkitTaskType {
         for (String player : island.members) {
             UUID uuid;
             try {
-                 uuid = UUID.fromString(player);
+                uuid = UUID.fromString(player);
             } catch (Exception e) {
                 continue;
             }

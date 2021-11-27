@@ -71,11 +71,11 @@ public enum Messages {
     PLACEHOLDERAPI_NO_TRACKED_QUEST("messages.placeholderapi-no-tracked-quest", "No tracked quest"),
     PLACEHOLDERAPI_DATA_NOT_LOADED("messages.placeholderapi-data-not-loaded", "Data not loaded");
 
+    private static final BukkitQuestsPlugin plugin;
+
     static {
         plugin = BukkitQuestsPlugin.getPlugin(BukkitQuestsPlugin.class);
     }
-
-    private static final BukkitQuestsPlugin plugin;
 
     private final String path;
     private final String def;

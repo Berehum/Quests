@@ -10,12 +10,12 @@ allprojects {
     apply plugin: 'java'
 
     group = 'com.leonardobishop'
-    version = '3.9.1'
+    version = '3.9.2'
 
     sourceCompatibility = 1.8
-    targetCompatibility = 1.8
+    targetCompatibility = 1.16
 }
-task allJar( type: Jar, dependsOn: subprojects.tasks['build'] ) {
+task allJar(type: Jar, dependsOn: subprojects.tasks['build']) {
     subprojects.each { subproject ->
         from subproject.configurations.archives.allArtifacts.files.collect {
             zipTree(it)

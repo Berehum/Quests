@@ -228,7 +228,8 @@ public class BukkitQuestsPlugin extends JavaPlugin implements Quests {
         boolean ignoreUpdates = false;
         try {
             ignoreUpdates = new File(this.getDataFolder() + File.separator + "stfuQuestsUpdate").exists();
-        } catch (Throwable ignored) { }
+        } catch (Throwable ignored) {
+        }
         this.updater = new Updater(this, super.getDescription().getVersion(), !ignoreUpdates);
         if (!ignoreUpdates) {
             serverScheduler.doAsync(() -> updater.check());
@@ -272,6 +273,7 @@ public class BukkitQuestsPlugin extends JavaPlugin implements Quests {
             taskTypeManager.registerTaskType(new ConsumeTaskType(this));
             taskTypeManager.registerTaskType(new WalkingTaskType(this));
             taskTypeManager.registerTaskType(new TamingTaskType(this));
+            taskTypeManager.registerTaskType(new TamingCertainTaskType(this));
             taskTypeManager.registerTaskType(new MilkingTaskType(this));
             taskTypeManager.registerTaskType(new ShearingTaskType(this));
             taskTypeManager.registerTaskType(new PositionTaskType(this));
@@ -287,13 +289,16 @@ public class BukkitQuestsPlugin extends JavaPlugin implements Quests {
             taskTypeManager.registerTaskType(new CraftingTaskType(this));
             taskTypeManager.registerTaskType(new BucketEmptyTaskType(this));
             taskTypeManager.registerTaskType(new BucketFillTaskType(this));
+            taskTypeManager.registerTaskType(new InteractBlockTaskType(this));
+            taskTypeManager.registerTaskType(new InteractEntityTaskType(this));
             // TODO: FIX
             // taskTypeManager.registerTaskType(new BrewingCertainTaskType());
             try {
                 Class.forName("org.bukkit.block.data.Ageable");
                 taskTypeManager.registerTaskType(new FarmingTaskType(this));
                 taskTypeManager.registerTaskType(new FarmingCertainTaskType(this));
-            } catch (ClassNotFoundException ignored) { } // server version cannot support task type
+            } catch (ClassNotFoundException ignored) {
+            } // server version cannot support task type
             if (Bukkit.getPluginManager().isPluginEnabled("ASkyBlock")) {
                 taskTypeManager.registerTaskType(new ASkyBlockLevelTaskType(this));
             }
@@ -361,12 +366,14 @@ public class BukkitQuestsPlugin extends JavaPlugin implements Quests {
         for (TaskType taskType : getTaskTypeManager().getTaskTypes()) {
             try {
                 taskType.onDisable();
-            } catch (Exception ignored) { }
+            } catch (Exception ignored) {
+            }
         }
         for (QPlayer qPlayer : qPlayerManager.getQPlayers()) {
             try {
                 qPlayerManager.savePlayerSync(qPlayer.getPlayerUUID());
-            } catch (Exception ignored) { }
+            } catch (Exception ignored) {
+            }
         }
         if (placeholderAPIHook != null) {
             try {
@@ -378,7 +385,8 @@ public class BukkitQuestsPlugin extends JavaPlugin implements Quests {
         }
         try {
             qPlayerManager.getStorageProvider().shutdown();
-        } catch (Exception ignored) { }
+        } catch (Exception ignored) {
+        }
     }
 
     @Override

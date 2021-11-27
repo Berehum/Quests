@@ -32,10 +32,6 @@ public interface QuestsLogger {
             numericVerbosity = number;
         }
 
-        public int getNumericVerbosity() {
-            return numericVerbosity;
-        }
-
         public static LoggingLevel fromNumber(int number) {
             for (LoggingLevel level : LoggingLevel.values()) {
                 if (level.getNumericVerbosity() == number) {
@@ -43,6 +39,10 @@ public interface QuestsLogger {
                 }
             }
             return LoggingLevel.INFO;
+        }
+
+        public int getNumericVerbosity() {
+            return numericVerbosity;
         }
     }
 }

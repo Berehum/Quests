@@ -31,68 +31,68 @@ gui:
   back-button:
     name: "&cReturn"
     lore:
-    - "&7Return to the categories menu."
+      - "&7Return to the categories menu."
     type: "ARROW"
   page-prev:
     name: "&7Previous Page"
     lore:
-    - "&7Switch the page to page &c{prevpage}."
+      - "&7Switch the page to page &c{prevpage}."
     type: "FEATHER"
   page-next:
     name: "&7Next Page"
     lore:
-    - "&7Switch the page to page &c{nextpage}."
+      - "&7Switch the page to page &c{nextpage}."
     type: "FEATHER"
   page-desc:
     name: "&7Page &c{page}"
     lore:
-    - "&7You are currently viewing page &c{page}."
+      - "&7You are currently viewing page &c{page}."
     type: "PAPER"
   quest-locked-display:
     name: "&c&lQuest Locked"
     lore:
-    - "&7You have not completed the requirements"
-    - "&7for this quest (&c{quest}&7)."
-    - ""
-    - "&7Requires: &c{requirements}"
-    - "&7to be completed to unlock."
+      - "&7You have not completed the requirements"
+      - "&7for this quest (&c{quest}&7)."
+      - ""
+      - "&7Requires: &c{requirements}"
+      - "&7to be completed to unlock."
     type: "RED_STAINED_GLASS_PANE"
   quest-permission-display:
     name: "&6&lNo Permission"
     lore:
-    - "&7You do not have permission for this"
-    - "&7quest (&6{quest}&7)."
+      - "&7You do not have permission for this"
+      - "&7quest (&6{quest}&7)."
     type: "BROWN_STAINED_GLASS_PANE"
   quest-cooldown-display:
     name: "&e&lQuest On Cooldown"
     lore:
-    - "&7You have recently completed this quest"
-    - "&7(&e{quest}&7) and you must"
-    - "&7wait another &e{time} &7to unlock again."
+      - "&7You have recently completed this quest"
+      - "&7(&e{quest}&7) and you must"
+      - "&7wait another &e{time} &7to unlock again."
     type: "ORANGE_STAINED_GLASS_PANE"
   quest-completed-display:
     name: "&a&lQuest Complete"
     lore:
-    - "&7You have completed this quest"
-    - "&7(&a{quest}&7) and cannot."
-    - "&7repeat it."
+      - "&7You have completed this quest"
+      - "&7(&a{quest}&7) and cannot."
+      - "&7repeat it."
     type: "GREEN_STAINED_GLASS_PANE"
   no-started-quests:
     name: "&c&lNo Started Quests"
     lore:
-    - "&7Go start some!"
+      - "&7Go start some!"
     type: "FEATHER"
   quest-cancel-yes:
     name: "&a&lConfirm Cancel"
     lore:
-    - "&7Confirm you wish to cancel"
-    - "&7this quest and lose all"
-    - "&7progress."
+      - "&7Confirm you wish to cancel"
+      - "&7this quest and lose all"
+      - "&7progress."
     type: "GREEN_STAINED_GLASS_PANE"
   quest-cancel-no:
     name: "&c&lAbort Cancel"
     lore:
-    - "&7Return to the quest menu."
+      - "&7Return to the quest menu."
     type: "RED_STAINED_GLASS_PANE"
   quest-cancel-background:
     type: "GRAY_STAINED_GLASS_PANE"
@@ -163,7 +163,7 @@ options:
   # Allow players to track a quest (you may want to remove the tracking instructions in the global item lore)
   allow-quest-track: true
   # Task type exclusions - include task IDs in this list which you don't want registering
-  task-type-exclusions: []
+  task-type-exclusions: [ ]
   # Titles for the GUIs
   guinames:
     quests-category: "Quests Categories"
@@ -269,8 +269,8 @@ quest-mode:
 
 global-quest-display:
   lore:
-#    append-normal:
-#      - "..."
+    #    append-normal:
+    #      - "..."
     append-not-started:
       - ""
       - "&eLeft Click &7to start this quest."

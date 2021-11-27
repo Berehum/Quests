@@ -39,24 +39,24 @@ repositories {
     // SuperiorSkyblock
     maven { url = 'https://repo.bg-software.com/repository/api/' }
     // VotingPlugin
-    maven { url = 'https://nexus.bencodez.com/repository/maven-public/'}
+    maven { url = 'https://nexus.bencodez.com/repository/maven-public/' }
     mavenCentral()
 }
 
 dependencies {
     compileOnly project(':common')
     // Spigot
-    compileOnly ('org.spigotmc:spigot-api:1.16.4-R0.1-SNAPSHOT') {
+    compileOnly('org.spigotmc:spigot-api:1.16.4-R0.1-SNAPSHOT') {
         exclude group: 'net.md-5', module: 'bungeecord-chat'
         exclude group: 'com.google.guava', module: 'guava'
         exclude group: 'org.yaml', module: 'snakeyaml'
     }
     // ASkyBlock
-    compileOnly ('com.wasteofplastic:askyblock:3.0.9.4') {
+    compileOnly('com.wasteofplastic:askyblock:3.0.9.4') {
         exclude group: 'net.milkbowl.vault', module: 'VaultAPI'
     }
     // BentoBox (bSkyBlock)
-    compileOnly ('world.bentobox:bentobox:1.15.5-SNAPSHOT') {
+    compileOnly('world.bentobox:bentobox:1.15.5-SNAPSHOT') {
         exclude group: 'org.eclipse.jdt', module: 'org.eclipse.jdt.annotation'
         exclude group: 'org.mongodb', module: 'mongodb-driver'
     }
@@ -69,7 +69,7 @@ dependencies {
     // MythicMobs
     compileOnly 'io.lumine.xikage:MythicMobs:4.11.0-BETA'
     // Citizens
-    compileOnly ('net.citizensnpcs:citizens:2.0.27-SNAPSHOT') {
+    compileOnly('net.citizensnpcs:citizens:2.0.27-SNAPSHOT') {
         exclude group: 'net.citizensnpcs', module: 'citizens-main'
         exclude group: 'net.citizensnpcs', module: 'citizens-v1_8_R3'
         exclude group: 'net.citizensnpcs', module: 'citizens-v1_12_R1'
@@ -85,7 +85,7 @@ dependencies {
     // ShopGUI+
     compileOnly 'com.github.brcdev-minecraft:shopgui-api:master-SNAPSHOT'
     // CoreProtect
-    compileOnly ('net.coreprotect:coreprotect:2.18.2') {
+    compileOnly('net.coreprotect:coreprotect:2.18.2') {
         exclude group: 'com.sk89q.worldedit', module: 'worldedit-bukkit'
     }
     // JetBrains Annotations
@@ -93,7 +93,7 @@ dependencies {
     // AuthLib
     compileOnly 'com.mojang:authlib:1.5.21'
     // FabledSkyblock
-    compileOnly ('com.songoda:skyblock:2.2.13') {
+    compileOnly('com.songoda:skyblock:2.2.13') {
         transitive = false
     }
     // SuperiorSkyblock

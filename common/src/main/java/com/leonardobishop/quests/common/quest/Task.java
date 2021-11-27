@@ -68,7 +68,7 @@ public class Task {
     /**
      * Add a key-value pair to this tasks configuration
      *
-     * @param key key
+     * @param key   key
      * @param value value
      */
     public void addConfigValue(@NotNull String key, @NotNull Object value) {

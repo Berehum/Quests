@@ -34,7 +34,7 @@ public final class ExpEarnTaskType extends BukkitTaskType {
             TaskUtils.configValidateInt(root + ".amount", config.get("amount"), problems, false, true, "amount");
         return problems;
     }
-    
+
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onExpEarn(PlayerExpChangeEvent e) {
         if (e.getPlayer().hasMetadata("NPC")) return;
@@ -46,34 +46,35 @@ public final class ExpEarnTaskType extends BukkitTaskType {
 
 
         for (Quest quest : super.getRegisteredQuests()) {
-            if (qPlayer.hasStartedQuest(quest)) {
-                QuestProgress questProgress = qPlayer.getQuestProgressFile().getQuestProgress(quest);
-                
-                for (Task task : quest.getTasksOfType(super.getType())) {
-                    if (!TaskUtils.validateWorld(e.getPlayer(), task)) continue;
+            if (!qPlayer.hasStartedQuest(quest)) continue;
+            QuestProgress questProgress = qPlayer.getQuestProgressFile().getQuestProgress(quest);
 
-                    TaskProgress taskProgress = questProgress.getTaskProgress(task.getId());
-                    
-                    if (taskProgress.isCompleted()) {
-                        continue;
-                    }
-                    int amount = e.getAmount();
-                    int expNeeded = (int) task.getConfigValue("amount");
-                    
-                    int progressExp;
-                    if (taskProgress.getProgress() == null) {
-                        progressExp = 0;
-                    } else {
-                        progressExp = (int) taskProgress.getProgress();
-                    }
-                    
-                    taskProgress.setProgress(progressExp + amount);
-                    
-                    if (((int) taskProgress.getProgress()) >= expNeeded) {
-                        taskProgress.setCompleted(true);
-                    }                    
+            for (Task task : quest.getTasksOfType(super.getType())) {
+                if (!TaskUtils.validateWorld(e.getPlayer(), task)) continue;
+
+                TaskProgress taskProgress = questProgress.getTaskProgress(task.getId());
+
+                if (taskProgress.isCompleted()) {
+                    continue;
+                }
+                int amount = e.getAmount();
+                int expNeeded = (int) task.getConfigValue("amount");
+
+                int progressExp;
+                if (taskProgress.getProgress() == null) {
+                    progressExp = 0;
+                } else {
+                    progressExp = (int) taskProgress.getProgress();
+                }
+
+                taskProgress.setProgress(progressExp + amount);
+
+                if (((int) taskProgress.getProgress()) >= expNeeded) {
+                    taskProgress.setProgress(expNeeded);
+                    taskProgress.setCompleted(true);
                 }
             }
-        }        
+        }
+
     }
 }

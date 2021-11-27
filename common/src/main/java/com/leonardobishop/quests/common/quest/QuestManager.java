@@ -42,6 +42,7 @@ public class QuestManager {
 
     /**
      * Get a map of id-quest of all quests registered
+     *
      * @return immutable map of all {@link Quest}
      */
     public @NotNull Map<String, Quest> getQuests() {

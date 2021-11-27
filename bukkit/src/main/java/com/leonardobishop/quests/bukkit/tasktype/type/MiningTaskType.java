@@ -46,35 +46,36 @@ public final class MiningTaskType extends BukkitTaskType {
         }
 
         for (Quest quest : super.getRegisteredQuests()) { // iterate through all quests which are registered to use this task type
-            if (qPlayer.hasStartedQuest(quest)) {
-                QuestProgress questProgress = qPlayer.getQuestProgressFile().getQuestProgress(quest);
+            if (!qPlayer.hasStartedQuest(quest)) continue;
+            QuestProgress questProgress = qPlayer.getQuestProgressFile().getQuestProgress(quest);
 
-                for (Task task : quest.getTasksOfType(super.getType())) { // get all tasks of this type
-                    if (!TaskUtils.validateWorld(event.getPlayer(), task)) continue;
+            for (Task task : quest.getTasksOfType(super.getType())) { // get all tasks of this type
+                if (!TaskUtils.validateWorld(event.getPlayer(), task)) continue;
 
-                    TaskProgress taskProgress = questProgress.getTaskProgress(task.getId()); // get the task progress and increment progress by 1
+                TaskProgress taskProgress = questProgress.getTaskProgress(task.getId()); // get the task progress and increment progress by 1
 
-                    if (taskProgress.isCompleted()) { // dont need to increment a completed task
-                        continue;
-                    }
+                if (taskProgress.isCompleted()) { // dont need to increment a completed task
+                    continue;
+                }
 
-                    int brokenBlocksNeeded = (int) task.getConfigValue("amount"); // this will retrieve a value from the config under the key "value"
+                int brokenBlocksNeeded = (int) task.getConfigValue("amount"); // this will retrieve a value from the config under the key "value"
 
-                    int progressBlocksBroken;
-                    if (taskProgress.getProgress() == null) { // note: if the player has never progressed before, getProgress() will return null
-                        progressBlocksBroken = 0;
-                    } else {
-                        progressBlocksBroken = (int) taskProgress.getProgress();
-                    }
+                int progressBlocksBroken;
+                if (taskProgress.getProgress() == null) { // note: if the player has never progressed before, getProgress() will return null
+                    progressBlocksBroken = 0;
+                } else {
+                    progressBlocksBroken = (int) taskProgress.getProgress();
+                }
 
-                    taskProgress.setProgress(progressBlocksBroken + 1); // the progress does not have to be an int, although must be serializable by the yaml provider
+                taskProgress.setProgress(progressBlocksBroken + 1); // the progress does not have to be an int, although must be serializable by the yaml provider
 
-                    if (((int) taskProgress.getProgress()) >= brokenBlocksNeeded) { // completion statement, if true the task is complete
-                        taskProgress.setCompleted(true);
-                    }
+                if (((int) taskProgress.getProgress()) >= brokenBlocksNeeded) { // completion statement, if true the task is complete
+                    taskProgress.setProgress(brokenBlocksNeeded);
+                    taskProgress.setCompleted(true);
                 }
             }
         }
+
     }
 
 }

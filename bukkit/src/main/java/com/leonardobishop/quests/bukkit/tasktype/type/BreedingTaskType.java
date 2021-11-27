@@ -52,43 +52,37 @@ public final class BreedingTaskType extends BukkitTaskType {
         }
         // Check if there is a player in the list, otherwise: return.
         for (Entity current : entList) {
-            if (current instanceof Player && !current.hasMetadata("NPC")) {
-                Player player = (Player) current;
-                QPlayer qPlayer = plugin.getPlayerManager().getPlayer(player.getUniqueId());
-                if (qPlayer == null) {
-                    continue;
-                }
+            if (!(current instanceof Player) || current.hasMetadata("NPC")) continue;
+            Player player = (Player) current;
+            QPlayer qPlayer = plugin.getPlayerManager().getPlayer(player.getUniqueId());
+            if (qPlayer == null) {
+                continue;
+            }
 
-                for (Quest quest : super.getRegisteredQuests()) {
-                    if (qPlayer.hasStartedQuest(quest)) {
-                        QuestProgress questProgress = qPlayer.getQuestProgressFile().getQuestProgress(quest);
+            for (Quest quest : super.getRegisteredQuests()) {
+                if (!qPlayer.hasStartedQuest(quest)) continue;
+                QuestProgress questProgress = qPlayer.getQuestProgressFile().getQuestProgress(quest);
 
-                        for (Task task : quest.getTasksOfType(super.getType())) {
-                            if (!TaskUtils.validateWorld(player, task)) continue;
+                for (Task task : quest.getTasksOfType(super.getType())) {
+                    if (!TaskUtils.validateWorld(player, task)) continue;
 
-                            TaskProgress taskProgress = questProgress.getTaskProgress(task.getId());
+                    TaskProgress taskProgress = questProgress.getTaskProgress(task.getId());
 
-                            if (taskProgress.isCompleted()) {
-                                continue;
-                            }
-
-                            int breedingNeeded = (int) task.getConfigValue("amount");
-                            int breedingProgress;
-
-                            if (taskProgress.getProgress() == null) {
-                                breedingProgress = 0;
-                            } else {
-                                breedingProgress = (int) taskProgress.getProgress();
-                            }
-
-                            taskProgress.setProgress(breedingProgress + 1);
-
-                            if (((int) taskProgress.getProgress()) >= breedingNeeded) {
-                                taskProgress.setCompleted(true);
-                            }
-                        }
+                    if (taskProgress.isCompleted()) {
+                        continue;
                     }
+
+                    int breedingProgress = (taskProgress.getProgress() == null) ? 0 : (int) taskProgress.getProgress();
+                    taskProgress.setProgress(breedingProgress + 1);
+
+                    int breedingNeeded = (int) task.getConfigValue("amount");
+                    if (((int) taskProgress.getProgress()) >= breedingNeeded) {
+                        taskProgress.setProgress(breedingNeeded);
+                        taskProgress.setCompleted(true);
+                    }
+
                 }
+
             }
         }
     }
