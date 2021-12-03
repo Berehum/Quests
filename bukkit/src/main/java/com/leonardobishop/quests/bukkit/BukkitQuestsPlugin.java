@@ -266,7 +266,7 @@ public class BukkitQuestsPlugin extends JavaPlugin implements Quests {
             taskTypeManager.registerTaskType(new BuildingCertainTaskType(this));
             taskTypeManager.registerTaskType(new MobkillingTaskType(this));
             taskTypeManager.registerTaskType(new MobkillingCertainTaskType(this));
-            taskTypeManager.registerTaskType(new PlayerkillingTaskType(this));
+            taskTypeManager.registerTaskType(new PlayerKillingTaskType(this));
             taskTypeManager.registerTaskType(new FishingTaskType(this));
             taskTypeManager.registerTaskType(new FishingCertainTaskType(this));
             taskTypeManager.registerTaskType(new InventoryTaskType(this));
@@ -291,8 +291,8 @@ public class BukkitQuestsPlugin extends JavaPlugin implements Quests {
             taskTypeManager.registerTaskType(new BucketFillTaskType(this));
             taskTypeManager.registerTaskType(new InteractBlockTaskType(this));
             taskTypeManager.registerTaskType(new InteractEntityTaskType(this));
-            // TODO: FIX
-            // taskTypeManager.registerTaskType(new BrewingCertainTaskType());
+            taskTypeManager.registerTaskType(new RaidTaskType(this));
+            taskTypeManager.registerTaskType(new BrewingCertainTaskType(this));
             try {
                 Class.forName("org.bukkit.block.data.Ageable");
                 taskTypeManager.registerTaskType(new FarmingTaskType(this));

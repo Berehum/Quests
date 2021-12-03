@@ -99,16 +99,16 @@ public final class InventoryTaskType extends BukkitTaskType {
                 Object configData = task.getConfigValue("data");
                 Object remove = task.getConfigValue("remove-items-when-complete");
 
-                QuestItem qi;
-                if ((qi = fixedQuestItemCache.get(quest.getId(), task.getId())) == null) {
+                QuestItem qi = fixedQuestItemCache.get(quest.getId(), task.getId());
+                if (qi == null) {
                     if (configBlock instanceof ConfigurationSection) {
                         qi = plugin.getConfiguredQuestItem("", (ConfigurationSection) configBlock);
                     } else {
                         material = Material.getMaterial(String.valueOf(configBlock));
-                        ItemStack is;
                         if (material == null) {
                             continue;
                         }
+                        ItemStack is;
                         if (configData != null) {
                             is = new ItemStack(material, 1, ((Integer) configData).shortValue());
                         } else {

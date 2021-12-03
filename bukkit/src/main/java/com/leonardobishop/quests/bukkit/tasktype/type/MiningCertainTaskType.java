@@ -119,23 +119,22 @@ public final class MiningCertainTaskType extends BukkitTaskType {
         }
 
         for (Quest quest : super.getRegisteredQuests()) {
-            if (qPlayer.hasStartedQuest(quest)) {
-                QuestProgress questProgress = qPlayer.getQuestProgressFile().getQuestProgress(quest);
+            if (!qPlayer.hasStartedQuest(quest)) continue;
+            QuestProgress questProgress = qPlayer.getQuestProgressFile().getQuestProgress(quest);
+            for (Task task : quest.getTasksOfType(super.getType())) {
+                TaskProgress taskProgress = questProgress.getTaskProgress(task.getId());
 
-                for (Task task : quest.getTasksOfType(super.getType())) {
-                    TaskProgress taskProgress = questProgress.getTaskProgress(task.getId());
+                if (taskProgress.isCompleted()) {
+                    continue;
+                }
 
-                    if (taskProgress.isCompleted()) {
-                        continue;
-                    }
-
-                    if (task.getConfigValue("reverse-if-placed") != null && ((boolean) task.getConfigValue("reverse-if-placed"))) {
-                        if (matchBlock(task, event.getBlock())) {
-                            increment(task, taskProgress, -1);
-                        }
+                if (task.getConfigValue("reverse-if-placed") != null && ((boolean) task.getConfigValue("reverse-if-placed"))) {
+                    if (matchBlock(task, event.getBlock())) {
+                        increment(task, taskProgress, -1);
                     }
                 }
             }
+
         }
     }
 

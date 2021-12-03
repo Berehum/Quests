@@ -7,7 +7,9 @@ import com.leonardobishop.quests.common.quest.Task;
 import org.bukkit.Material;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
+import org.jetbrains.annotations.NotNull;
 
+import java.util.HashMap;
 import java.util.List;
 
 public class TaskUtils {
@@ -148,6 +150,59 @@ public class TaskUtils {
                         ConfigProblemDescriptions.UNKNOWN_MATERIAL.getDescription(String.valueOf(object)), path));
             }
         }
+    }
+
+    public static List<String> configValidateStringList(String path, Object object, List<ConfigProblem> problems, boolean allowNull, String... args) {
+        if (object == null) {
+            if (!allowNull) {
+                problems.add(new ConfigProblem(ConfigProblem.ConfigProblemType.ERROR,
+                        String.format("Expected an stringlist for '%s', but got null instead", (Object[]) args), path));
+            }
+            return null;
+        }
+
+        try {
+            List<String> list = (List<String>) object;
+            return list;
+        } catch (ClassCastException ex) {
+            problems.add(new ConfigProblem(ConfigProblem.ConfigProblemType.ERROR,
+                    String.format("Expected a stringlist for '%s', but got '" + object + "' instead", (Object[]) args), path));
+        }
+        return null;
+    }
+
+    public static void configValidateEnum(String path, Object object, List<ConfigProblem> problems, boolean allowNull, @NotNull Class<? extends Enum> enumClazz, String... args) {
+        if (object == null) {
+            if (!allowNull) {
+                problems.add(new ConfigProblem(ConfigProblem.ConfigProblemType.ERROR,
+                        String.format("Expected an enum for '%s', but got null instead", (Object[]) args), path));
+            }
+            return;
+        }
+
+        try {
+            Enum.valueOf(enumClazz, String.valueOf(object));
+        } catch (Exception ex) {
+            problems.add(new ConfigProblem(ConfigProblem.ConfigProblemType.ERROR,
+                    String.format("Expected an enum with type " + enumClazz.getSimpleName() + " for '%s', but got '" + object + "' instead", (Object[]) args), path));
+        }
+    }
+
+    public static void configValidateMaterial(String path, Object object, List<ConfigProblem> problems, boolean allowNull, String... args) {
+        if (object == null) {
+            if (!allowNull) {
+                problems.add(new ConfigProblem(ConfigProblem.ConfigProblemType.ERROR,
+                        String.format("Expected a material for '%s', but got null instead", (Object[]) args), path));
+            }
+            return;
+        }
+
+        Material material = Material.matchMaterial(String.valueOf(object));
+
+        if (material != null) return;
+        problems.add(new ConfigProblem(ConfigProblem.ConfigProblemType.ERROR,
+                    String.format("Expected a material for '%s', but got '" + object + "' instead", (Object[]) args), path));
+
     }
 
     public static boolean configValidateExists(String path, Object object, List<ConfigProblem> problems, String... args) {

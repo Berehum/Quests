@@ -89,8 +89,8 @@ public final class CraftingTaskType extends BukkitTaskType {
                 Object configBlock = task.getConfigValue("item");
                 Object configData = task.getConfigValue("data");
 
-                QuestItem qi;
-                if ((qi = fixedQuestItemCache.get(quest.getId(), task.getId())) == null) {
+                QuestItem qi = fixedQuestItemCache.get(quest.getId(), task.getId());
+                if (qi == null) {
                     if (configBlock instanceof ConfigurationSection) {
                         qi = plugin.getConfiguredQuestItem("", (ConfigurationSection) configBlock);
                     } else {
