@@ -94,7 +94,6 @@ public final class MobkillingCertainTaskType extends BukkitTaskType {
                     continue;
                 }
 
-
                 Object configName = task.getConfigValues().containsKey("name") ? task.getConfigValue("name") : task.getConfigValue("names");
 
                 if (configName != null) {
@@ -108,7 +107,7 @@ public final class MobkillingCertainTaskType extends BukkitTaskType {
                     boolean validName = false;
                     for (String name : configNames) {
                         name = Chat.color(name);
-                        if (mob.getCustomName() == null || !mob.getCustomName().equals(name)) {
+                        if (mob.getCustomName() != null && !mob.getCustomName().equals(name)) {
                             validName = true;
                             break;
                         }
@@ -120,13 +119,14 @@ public final class MobkillingCertainTaskType extends BukkitTaskType {
                 int progressKills = (taskProgress.getProgress() == null) ? 0 : (int) taskProgress.getProgress();
                 taskProgress.setProgress(progressKills + 1);
 
+                taskProgress.setProgress(progressKills + 1);
                 int mobKillsNeeded = (int) task.getConfigValue("amount");
                 if (((int) taskProgress.getProgress()) >= mobKillsNeeded) {
                     taskProgress.setProgress(mobKillsNeeded);
                     taskProgress.setCompleted(true);
                 }
-            }
 
+            }
         }
     }
 
