@@ -46,11 +46,9 @@ public final class BrewingTaskType extends BukkitTaskType {
 
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onBlockPlace(PlayerInteractEvent event) {
-        if (event.getAction() == Action.RIGHT_CLICK_BLOCK) {
-            if (event.getClickedBlock().getType() == Material.BREWING_STAND) {
-                brewingStands.put(event.getClickedBlock().getLocation(), event.getPlayer().getUniqueId());
-            }
-        }
+        if (event.getAction() != Action.RIGHT_CLICK_BLOCK) return;
+        if (event.getClickedBlock().getType() != Material.BREWING_STAND) return;
+        brewingStands.put(event.getClickedBlock().getLocation(), event.getPlayer().getUniqueId());
     }
 
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)

@@ -33,14 +33,25 @@ public class TamingCertainTaskType extends BukkitTaskType {
     @Override
     public @NotNull List<ConfigProblem> validateConfig(@NotNull String root, @NotNull HashMap<String, Object> config) {
         ArrayList<ConfigProblem> problems = new ArrayList<>();
-        if (TaskUtils.configValidateExists(root + ".mob", config.get("mob"), problems, "mob", super.getType())) {
-            try {
-                EntityType.valueOf(String.valueOf(config.get("mob")));
-            } catch (IllegalArgumentException ex) {
-                problems.add(new ConfigProblem(ConfigProblem.ConfigProblemType.WARNING,
-                        ConfigProblemDescriptions.UNKNOWN_ENTITY_TYPE.getDescription(String.valueOf(config.get("mob"))), root + ".mob"));
+
+        Object mob = config.get("mob");
+        Object mobs = config.get("mobs");
+
+        if (mobs == null && mob == null) {
+            TaskUtils.configValidateExists(root + ".mob", null, problems, "mob", super.getType());
+        }
+
+        if (mob != null) {
+            TaskUtils.configValidateEnum(root + ".mob", mob, problems, false, EntityType.class, "mob");
+        }
+
+        if (mobs != null) {
+            List<String> stringList = TaskUtils.configValidateStringList(root + ".mobs", mobs, problems, false, "mobs");
+            for (String string : stringList) {
+                TaskUtils.configValidateEnum(root + ".mobs", string, problems, false, EntityType.class, "mobs");
             }
         }
+
         if (TaskUtils.configValidateExists(root + ".amount", config.get("amount"), problems, "amount", super.getType()))
             TaskUtils.configValidateInt(root + ".amount", config.get("amount"), problems, false, true, "amount");
         return problems;
@@ -73,18 +84,12 @@ public class TamingCertainTaskType extends BukkitTaskType {
                     continue;
                 }
 
-                String configEntity = (String) task.getConfigValue("mob");
-
-                EntityType entity;
-                try {
-                    entity = EntityType.valueOf(configEntity);
-                } catch (IllegalArgumentException ex) {
-                    continue;
+                List<String> mob = (List<String>) task.getConfigValue("mobs", new ArrayList<>());
+                if (task.getConfigValues().containsKey("mob")) {
+                    mob.add(String.valueOf(task.getConfigValue("mob")));
                 }
+                if (!mob.contains(event.getEntity().getType().name())) continue;
 
-                if (event.getEntity().getType() != entity) {
-                    continue;
-                }
 
                 int tamesNeeded = (int) task.getConfigValue("amount");
 

@@ -267,6 +267,7 @@ public class BukkitQuestsPlugin extends JavaPlugin implements Quests {
             taskTypeManager.registerTaskType(new MobkillingTaskType(this));
             taskTypeManager.registerTaskType(new MobkillingCertainTaskType(this));
             taskTypeManager.registerTaskType(new PlayerKillingTaskType(this));
+            taskTypeManager.registerTaskType(new PlayerKillingCertainTaskType(this));
             taskTypeManager.registerTaskType(new FishingTaskType(this));
             taskTypeManager.registerTaskType(new FishingCertainTaskType(this));
             taskTypeManager.registerTaskType(new InventoryTaskType(this));
@@ -294,6 +295,11 @@ public class BukkitQuestsPlugin extends JavaPlugin implements Quests {
             taskTypeManager.registerTaskType(new RaidTaskType(this));
             taskTypeManager.registerTaskType(new BrewingCertainTaskType(this));
             try {
+                Class.forName("org.bukkit.advancement.Advancement");
+                taskTypeManager.registerTaskType(new AdvancementTaskType(this));
+            } catch (ClassNotFoundException ignored) {
+            }// server version cannot support task type
+            try {
                 Class.forName("org.bukkit.block.data.Ageable");
                 taskTypeManager.registerTaskType(new FarmingTaskType(this));
                 taskTypeManager.registerTaskType(new FarmingCertainTaskType(this));
@@ -302,8 +308,8 @@ public class BukkitQuestsPlugin extends JavaPlugin implements Quests {
             if (Bukkit.getPluginManager().isPluginEnabled("ASkyBlock")) {
                 taskTypeManager.registerTaskType(new ASkyBlockLevelTaskType(this));
             }
-            if (Bukkit.getPluginManager().isPluginEnabled("BentoBox")) {
-                BentoBoxLevelTaskType.register(this, taskTypeManager);
+            if (Bukkit.getPluginManager().isPluginEnabled("BentoBox") && BentoBoxLevelTaskType.addonIsPresent()) {
+                taskTypeManager.registerTaskType(new BentoBoxLevelTaskType(this));
             }
             //TODO FIX
             if (Bukkit.getPluginManager().isPluginEnabled("IridiumSkyblock")

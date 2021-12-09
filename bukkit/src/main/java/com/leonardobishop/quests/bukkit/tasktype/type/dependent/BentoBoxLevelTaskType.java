@@ -30,10 +30,8 @@ public final class BentoBoxLevelTaskType extends BukkitTaskType {
         this.plugin = plugin;
     }
 
-    public static void register(BukkitQuestsPlugin plugin, TaskTypeManager manager) {
-        if (BentoBox.getInstance().getAddonsManager().getAddonByName("Level").isPresent()) {
-            manager.registerTaskType(new BentoBoxLevelTaskType(plugin));
-        }
+    public static boolean addonIsPresent() {
+        return BentoBox.getInstance().getAddonsManager().getAddonByName("Level").isPresent();
     }
 
     @Override
